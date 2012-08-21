@@ -53,6 +53,11 @@ var jrtmpl = benchmark(function () {
 });
 console.log("John Resig's tmpl: %d counts/sec", jrtmpl);
 
+var microtemplateEscaped = benchmark(function () {
+	template(fizzbuzz, {n : 300 });
+});
+console.log("micro-template.js (escaped): %d counts/sec", microtemplateEscaped);
+
 
 // ============================================================================
 // try n counts in 1sec

@@ -11,6 +11,9 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 	assert.equal(a({ foo : 'foo', bar: 'bar' }), '<b>foo</b><i>bar</i>');
 
 	assert.equal(template('<b><%= foo %></b><i><%= bar %></i>', { foo : 'foo', bar: 'bar' }), '<b>foo</b><i>bar</i>');
+
+	assert.equal(template("<a href='foo'>foo</a>", {}), "<a href='foo'>foo</a>");
+	assert.equal(template('<a href="foo">foo</a>', {}), '<a href="foo">foo</a>');
 })();
 
 

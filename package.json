@@ -14,6 +14,11 @@
   "scripts": {
     "test": "node test/test.js"
   },
+  "keywords": [
+    "template",
+    "engine",
+    "ejs"
+  ],
   "repository": "",
   "author": "cho45",
   "license": "MIT"

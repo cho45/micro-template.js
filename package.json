@@ -3,6 +3,11 @@
   "version": "0.0.0",
   "description": "micro template engine",
   "main": "lib/micro-template.js",
+  "homepage": "https://github.com/cho45/micro-template.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cho45/micro-template.js.git"
+  },
   "directories": {
     "test": "test"
   },

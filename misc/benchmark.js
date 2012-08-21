@@ -49,7 +49,7 @@ var microtemplate = benchmark(function () {
 console.log("micro-template.js: %d counts/sec", microtemplate);
 
 var jrtmpl = benchmark(function () {
-	var a = tmpl(fizzbuzz, {n : 300 });
+	tmpl(fizzbuzz, {n : 300 });
 });
 console.log("John Resig's tmpl: %d counts/sec", jrtmpl);
 
@@ -63,10 +63,10 @@ console.log("micro-template.js (escaped): %d counts/sec", microtemplateEscaped);
 // try n counts in 1sec
 function benchmark (fun) {
 	var now, start = new Date().getTime();
-	var count = 0;
+	var count = 0, n = 1000;
 	do {
-		fun();
-		count++;
+		for (var i = 0; i < n; i++) fun();
+		count += n;
 		now = new Date().getTime();
 	} while ( (now - start) < 1000);
 	return (count / (now - start)) * 1000;

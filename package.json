@@ -1,0 +1,15 @@
+{
+  "name": "micro-template",
+  "version": "0.0.0",
+  "description": "micro template engine",
+  "main": "lib/micro-template.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "repository": "",
+  "author": "cho45",
+  "license": "MIT"
+}

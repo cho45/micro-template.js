@@ -1,13 +1,10 @@
 {
   "name": "micro-template",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "micro template engine",
   "main": "lib/micro-template.js",
   "homepage": "https://github.com/cho45/micro-template.js",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/cho45/micro-template.js.git"
-  },
+  "repository": "",
   "directories": {
     "test": "test"
   },
@@ -19,7 +16,6 @@
     "engine",
     "ejs"
   ],
-  "repository": "",
   "author": "cho45",
   "license": "MIT"
 }

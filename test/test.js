@@ -14,6 +14,9 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 
 	assert.equal(template("<a href='foo'>foo</a>", {}), "<a href='foo'>foo</a>");
 	assert.equal(template('<a href="foo">foo</a>', {}), '<a href="foo">foo</a>');
+
+	assert.equal(template('foo<% if ("a") { %><%= "aa" %>bar<% } %><%=raw "baz" %>', {}), 'fooaabarbaz');
+	assert.equal(template("foo<% if ('a') { %><%= 'aa' %>bar<% } %><%=raw 'baz' %>", {}), 'fooaabarbaz');
 })();
 
 
@@ -78,7 +81,6 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 	});
 	assert.equal(error, 'TemplateError: foobaz is not defined (on test1 line 4)');
 })();
-
 
 (function () {
 	var fizzbuzz = template('fizzbuzz');

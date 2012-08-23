@@ -44,65 +44,32 @@ var ejs = require('ejs');
 
 // ============================================================================
 var fizzbuzz = require('fs').readFileSync('test/data-fizzbuzz.tmpl', 'utf-8');
+var fizzbuzzRaw1 = fizzbuzz.replace(/<%=/g, '<%=raw');
+var fizzbuzzRaw2 = fizzbuzz.replace(/<%=/g, '<%-');
+var ejsFunc = ejs.compile(fizzbuzzRaw2);
 
-(function () {
-	var fizzbuzzRaw = fizzbuzz.replace(/<%=/g, '<%=raw');
-	var result = benchmark(function () {
-		template(fizzbuzzRaw, {n : 300 });
-	});
-	console.log("micro-template.js: %d counts/sec", result);
-})();
-
-(function () {
-	var result = benchmark(function () {
+benchmark({
+	"micro-template" : function () {
+		template(fizzbuzzRaw1, {n : 300 });
+	},
+	"micro-template (escaped)" : function () {
 		template(fizzbuzz, {n : 300 });
-	});
-	console.log("micro-template.js (escaped): %d counts/sec", result);
-})();
-
-(function () {
-	var fizzbuzzRaw = fizzbuzz.replace(/<%=/g, '<%-');
-	var result = benchmark(function () {
-		ejs.render(fizzbuzzRaw, {n : 300 });
-	});
-	console.log("ejs.render: %d counts/sec", result);
-})();
-
-(function () {
-	var result = benchmark(function () {
-		ejs.render(fizzbuzz, {n : 300 });
-	});
-	console.log("ejs.render (escaped): %d counts/sec", result);
-})();
-
-(function () {
-	var fizzbuzzRaw = fizzbuzz.replace(/<%=/g, '<%-');
-	var fun = ejs.compile(fizzbuzzRaw);
-	var result = benchmark(function () {
-		fun({n : 300});
-	});
-	console.log("pre ejs.compile: %d counts/sec", result);
-})();
-
-(function () {
-	var fun = ejs.compile(fizzbuzz);
-	var result = benchmark(function () {
-		fun({n : 300});
-	});
-	console.log("pre ejs.compile (escaped): %d counts/sec", result);
-})();
-
-(function () {
-	var result = benchmark(function () {
+	},
+	"John Resig's tmpl" : function () {
 		tmpl(fizzbuzz, {n : 300 });
-	});
-	console.log("John Resig's tmpl: %d counts/sec", result);
-})();
+	},
+	"ejs.render": function () {
+		ejs.render(fizzbuzzRaw2, {n : 300 });
+	},
+	"ejs.render pre compiled": function () {
+		ejsFunc({n : 300});
+	}
+});
 
 
 // ============================================================================
 // try n counts in 1sec
-function benchmark (fun) {
+function measure (fun) {
 	var now, start = new Date().getTime();
 	var count = 0, n = 500;
 	do {
@@ -113,3 +80,14 @@ function benchmark (fun) {
 	return (count / (now - start)) * 1000;
 }
 
+function benchmark (funcs) {
+	var result = [];
+	for (var key in funcs) if (funcs.hasOwnProperty(key)) {
+		console.log('running... %s', key);
+		result.push({ name : key, counts : measure(funcs[key]) });
+	}
+	result.sort(function (a, b) { return b.counts - a.counts });
+	for (var i = 0, it; (it = result[i]); i++) {
+		console.log("%d: %s", it.counts.toFixed(1), it.name);
+	}
+}

@@ -2,6 +2,7 @@
 
 var assert = require('assert');
 var template = require('../lib/micro-template.js').template;
+var extended = require('../lib/micro-template/extended').template;
 
 template.get = function (id) { return require('fs').readFileSync('test/data-' + id + '.tmpl', 'utf-8') };
 
@@ -89,3 +90,9 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 	var fizzbuzz = template('fizzbuzz');
 	assert.equal(fizzbuzz({ n : 15 }).replace(/\s+/g, ' '), ' 1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz ');
 })();
+
+(function () {
+	assert.equal(extended('includeA', {}), 'aaa\nbbb\nccc');
+	assert.equal(extended('wrapperContent', { foo: 'foo' }), 'aaa\nfoo\n\n!!!\nfoo\n!!!\n\nbar\nbbb');
+})();
+

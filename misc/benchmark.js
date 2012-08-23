@@ -81,13 +81,20 @@ function measure (fun) {
 }
 
 function benchmark (funcs) {
+	var os = require('os');
+	console.log('%s (%s) %s %s', os.type(), os.platform(), os.arch(), os.release());
+	console.log(os.cpus());
+
 	var result = [];
 	for (var key in funcs) if (funcs.hasOwnProperty(key)) {
 		console.log('running... %s', key);
 		result.push({ name : key, counts : measure(funcs[key]) });
 	}
 	result.sort(function (a, b) { return b.counts - a.counts });
+
+	console.log('=== result ===');
+
 	for (var i = 0, it; (it = result[i]); i++) {
-		console.log("%d: %s", it.counts.toFixed(1), it.name);
+		console.log("%d: (%d msec) %s", it.counts.toFixed(1), (1000 / it.counts).toFixed(3), it.name);
 	}
 }

@@ -40,35 +40,76 @@ var template = require('../lib/micro-template.js').template;
   };
 })();
 // ============================================================================
-var fizzbuzz = require('fs').readFileSync('test/data-fizzbuzz.tmpl', 'utf-8')
-var fizzbuzzRaw = fizzbuzz.replace(/<%=/g, '<%=raw');
+var ejs = require('ejs');
 
-var microtemplate = benchmark(function () {
-	template(fizzbuzzRaw, {n : 300 });
-});
-console.log("micro-template.js: %d counts/sec", microtemplate);
+// ============================================================================
+var fizzbuzz = require('fs').readFileSync('test/data-fizzbuzz.tmpl', 'utf-8');
 
-var jrtmpl = benchmark(function () {
-	tmpl(fizzbuzz, {n : 300 });
-});
-console.log("John Resig's tmpl: %d counts/sec", jrtmpl);
+(function () {
+	var fizzbuzzRaw = fizzbuzz.replace(/<%=/g, '<%=raw');
+	var result = benchmark(function () {
+		template(fizzbuzzRaw, {n : 300 });
+	});
+	console.log("micro-template.js: %d counts/sec", result);
+})();
 
-var microtemplateEscaped = benchmark(function () {
-	template(fizzbuzz, {n : 300 });
-});
-console.log("micro-template.js (escaped): %d counts/sec", microtemplateEscaped);
+(function () {
+	var result = benchmark(function () {
+		template(fizzbuzz, {n : 300 });
+	});
+	console.log("micro-template.js (escaped): %d counts/sec", result);
+})();
+
+(function () {
+	var fizzbuzzRaw = fizzbuzz.replace(/<%=/g, '<%-');
+	var result = benchmark(function () {
+		ejs.render(fizzbuzzRaw, {n : 300 });
+	});
+	console.log("ejs.render: %d counts/sec", result);
+})();
+
+(function () {
+	var result = benchmark(function () {
+		ejs.render(fizzbuzz, {n : 300 });
+	});
+	console.log("ejs.render (escaped): %d counts/sec", result);
+})();
+
+(function () {
+	var fizzbuzzRaw = fizzbuzz.replace(/<%=/g, '<%-');
+	var fun = ejs.compile(fizzbuzzRaw);
+	var result = benchmark(function () {
+		fun({n : 300});
+	});
+	console.log("pre ejs.compile: %d counts/sec", result);
+})();
+
+(function () {
+	var fun = ejs.compile(fizzbuzz);
+	var result = benchmark(function () {
+		fun({n : 300});
+	});
+	console.log("pre ejs.compile (escaped): %d counts/sec", result);
+})();
+
+(function () {
+	var result = benchmark(function () {
+		tmpl(fizzbuzz, {n : 300 });
+	});
+	console.log("John Resig's tmpl: %d counts/sec", result);
+})();
 
 
 // ============================================================================
 // try n counts in 1sec
 function benchmark (fun) {
 	var now, start = new Date().getTime();
-	var count = 0, n = 1000;
+	var count = 0, n = 500;
 	do {
 		for (var i = 0; i < n; i++) fun();
 		count += n;
 		now = new Date().getTime();
-	} while ( (now - start) < 1000);
+	} while ( (now - start) < 500);
 	return (count / (now - start)) * 1000;
 }
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var template = require('../lib/micro-template.js').template;
+var template = require('../lib/micro-template/extended').template;
 var data = getTextData();
 template.get = function (id) { return data[id] };
 
@@ -13,11 +13,7 @@ template.get = function (id) { return data[id] };
 	//@includeB
 	// bbb
 
-	var include = function (name) {
-		template.context.ret += template(name, template.context.stash);
-	};
-
-	var a = template('includeA', { include : include });
+	var a = template('includeA', {});
 	console.log(a);
 })();
 
@@ -38,15 +34,7 @@ console.log('==============');
 	// <% }) %>
 	// bbb
 
-	var wrapper = function (name, fun) {
-		var current = template.context.ret;
-		template.context.ret = '';
-		fun.apply(template.context);
-		var content = template.context.ret;
-		template.context.ret = current + template(name, { content : content });
-	};
-
-	var b = template('wrapperContent', { wrapper : wrapper, foo : 'foo' });
+	var b = template('wrapperContent', { foo : 'foo' });
 	console.log(b);
 })();
 

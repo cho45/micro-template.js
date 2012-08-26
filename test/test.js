@@ -21,6 +21,16 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 
 	assert.equal(template("<a href='foo'><%= foo %></a>", { foo : 'foo' }), "<a href='foo'>foo</a>");
 	assert.equal(template('<a href="foo"><%= foo %></a>', { foo : 'foo' }), '<a href="foo">foo</a>');
+
+	// function must be bound with this
+	assert.equal(template('<% array.forEach(function (i) { %><%= i %><% }, this) %>', { array : [1, 2, 3] }), '123');
+
+	// or supply other function
+	var each = function (array, func) {
+		for (var i = 0, len = array.length; i < len; i++)
+			func.call(template.context, array[i]);
+	};
+	assert.equal(template('<% each(array, function (i) { %><%= i %><% }) %>', { array : [1, 2, 3], each : each }), '123');
 })();
 
 
@@ -63,7 +73,7 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 			throw e;
 		}
 	});
-	assert.equal(error, 'TemplateError: isFoo is not defined (on test1 line 1)');
+	assert.equal(error, 'TemplateError: ReferenceError: isFoo is not defined (on test1 line 1)');
 
 	assert.throws(function () {
 		try {
@@ -73,7 +83,7 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 			throw e;
 		}
 	});
-	assert.equal(error, 'TemplateError: foobar is not defined (on test1 line 2)');
+	assert.equal(error, 'TemplateError: ReferenceError: foobar is not defined (on test1 line 2)');
 
 	assert.throws(function () {
 		try {
@@ -83,7 +93,7 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 			throw e;
 		}
 	});
-	assert.equal(error, 'TemplateError: foobaz is not defined (on test1 line 4)');
+	assert.equal(error, 'TemplateError: ReferenceError: foobaz is not defined (on test1 line 4)');
 })();
 
 (function () {
@@ -93,6 +103,28 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 
 (function () {
 	assert.equal(extended('includeA', {}), 'aaa\nbbb\nccc');
-	assert.equal(extended('wrapperContent', { foo: 'foo' }), 'aaa\nfoo\n\n!!!\nfoo\n!!!\n\nbar\nbbb');
 })();
 
+(function () {
+	assert.equal(extended('wrapperContent', { foo: 'foo', bar: 'bar' }), '111\n222\n\n333\nfoo\n444\n\n555\nbar\n666\n777');
+
+	assert.throws(function () {
+		try {
+			extended('wrapperContent', { bar: 'xxx' });
+		} catch (e) {
+			error = e;
+			throw e;
+		}
+	});
+	assert.equal(error, 'TemplateError: ReferenceError: foo is not defined (on wrapperContent line 4)');
+
+	assert.throws(function () {
+		try {
+			extended('wrapperContent', { foo: 'xxx' });
+		} catch (e) {
+			error = e;
+			throw e;
+		}
+	});
+	assert.equal(error, 'TemplateError: TemplateError: ReferenceError: bar is not defined (on wrapper line 4) (on wrapperContent line 6)');
+})();

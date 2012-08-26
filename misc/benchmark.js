@@ -85,6 +85,9 @@ function benchmark (funcs) {
 	console.log('%s (%s) %s %s', os.type(), os.platform(), os.arch(), os.release());
 	console.log(os.cpus());
 
+	var empty = 1000 / measure(function () {});
+	console.log('empty function call: %d msec', empty);
+
 	var result = [];
 	for (var key in funcs) if (funcs.hasOwnProperty(key)) {
 		console.log('running... %s', key);
@@ -95,6 +98,6 @@ function benchmark (funcs) {
 	console.log('=== result ===');
 
 	for (var i = 0, it; (it = result[i]); i++) {
-		console.log("%d: (%d msec) %s", it.counts.toFixed(1), (1000 / it.counts).toFixed(3), it.name);
+		console.log("%d: (%d msec) %s", it.counts.toFixed(1), (1000 / it.counts - (empty * it.counts)).toFixed(3), it.name);
 	}
 }

@@ -1,6 +1,8 @@
 micro-template.js
 =================
 
+https://github.com/cho45/micro-template.js
+
 micro-template is a template engine on JavaScript which like embed js.
 
 This is inspired from [John Resig's template]( http://ejohn.org/blog/javascript-micro-templating/ ) but has more efficient feature:
@@ -72,5 +74,85 @@ SYNTAX
  * `<%= … %>`: escaped html output part
  * `<%=raw …%>`: unescaped (almost dangerous) html output part
 
-Start script part with `<%` and end with `%>`.
+
+DESCRIPTION
+===========
+
+## template(id or source [, data ])
+
+If the first argument of template matches `/^[\w\-]+$/`, it is treated as `id` of template. In this case, use `document.getElementById(id).innerHTML` to get source.
+
+Otherwise, the first argument is treated as source directly.
+
+The second argument is optional. If it was NOT supplied, `template()` returns `Function`, otherwise `String`.
+
+
+CUSTOM `get` FUNCTION
+=====================
+
+By default, micro-template uses `document.getElementById(id).innerHTML` to get template source from id.
+
+To override this behaviour, you can set function to `template.get`.
+
+```
+template.get = function (id) { return require('fs').readFileSync('tmpl/' + id + '.tmpl', 'utf-8') };
+```
+
+EXTENDED FEATURES
+=================
+
+This package also provides `micro-template/extended` module which includes `include` and `wrapper` function. Of course, this feature can be used on browsers by just copying and pasting `lib/micro-template/extended.js`.
+
+## include(name)
+
+```
+var template = require('micro-template/extended').template;
+
+template('view1', { foo : 'bar' });
+```
+
+```
+<!-- view1 -->
+aaa
+<% include('view2') %>
+bbb
+```
+
+```
+<!-- view2 -->
+Hello, World!
+```
+
+## wrapper(name, func)
+
+```
+var template = require('micro-template/extended').template;
+
+template('view1', { foo : 'bar' });
+```
+
+```
+<!-- view1 -->
+<% wrapper('wrapper', function () { %>
+<h1>Hello, World!</h1>
+<% }) %>
+```
+
+```
+<!-- wrapper -->
+<!DOCTYPE html>
+<title><%= foo %></title>
+<body><%=raw content %></body>
+```
+
+BENCHMARK
+=========
+
+on Browsers:
+
+ * http://jsdo.it/cho45/rjwe/fullscreen
+
+node:
+
+ * node misc/benchmark.js
 

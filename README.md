@@ -126,7 +126,7 @@ Hello, World!
 ## wrapper(name, func)
 
 ```
-var template = require('micro-template/extended').template;
+var template = require('micro-template').extended;
 
 template('view1', { foo : 'bar' });
 ```

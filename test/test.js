@@ -2,7 +2,7 @@
 
 var assert = require('assert');
 var template = require('../lib/micro-template.js').template;
-var extended = require('../lib/micro-template/extended').template;
+var extended = require('../lib/micro-template.js').extended;
 
 template.get = function (id) { return require('fs').readFileSync('test/data-' + id + '.tmpl', 'utf-8') };
 

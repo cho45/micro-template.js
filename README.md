@@ -98,6 +98,20 @@ To override this behaviour, you can set function to `template.get`.
 template.get = function (id) { return require('fs').readFileSync('tmpl/' + id + '.tmpl', 'utf-8') };
 ```
 
+DEFINE DATA VARIABLE EXPLICITLY
+================================
+
+By default, micro-template uses `with` syntax to expand data variables. This behavior is almost convenience, but if you want to expressly fast template function, you can do without `with` by sepcify `template.varible`.
+
+```
+template.variable = 'tmpl';
+
+var func = template('aaa <% tmpl.foo %> bbb');
+var result = func({ foo : 'foo' });
+```
+
+`template.variable` is used to data variable name in template code. And `with` syntax is not used any more. So you can't refer to variable without `tmpl.` prefix.
+
 EXTENDED FEATURES
 =================
 
@@ -156,3 +170,8 @@ node:
 
  * node misc/benchmark.js
 
+
+LICENSE
+=======
+
+MIT: http://cho45.github.com/mit-license

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // ============================================================================
-var template = require('../lib/micro-template.js').extended;
+var template = require('../lib/micro-template.js').template;
 
 // ============================================================================
 // Simple JavaScript Templating
@@ -46,14 +46,21 @@ var ejs = require('ejs');
 var fizzbuzz = require('fs').readFileSync('test/data-fizzbuzz.tmpl', 'utf-8');
 var fizzbuzzRaw1 = fizzbuzz.replace(/<%=/g, '<%=raw');
 var fizzbuzzRaw2 = fizzbuzz.replace(/<%=/g, '<%-');
+var fizzbuzzVar  = fizzbuzz.replace(/^/, '<% var n = stash.n; %>');
 var ejsFunc = ejs.compile(fizzbuzzRaw2);
 
 benchmark({
 	"micro-template" : function () {
+		template.variable = null;
 		template(fizzbuzzRaw1, {n : 300 });
 	},
 	"micro-template (escaped)" : function () {
+		template.variable = null;
 		template(fizzbuzz, {n : 300 });
+	},
+	"micro-template (template.variable)" : function () {
+		template.variable = 'stash';
+		template(fizzbuzzVar, {n : 300 });
 	},
 	"John Resig's tmpl" : function () {
 		tmpl(fizzbuzz, {n : 300 });

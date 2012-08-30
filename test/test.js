@@ -33,6 +33,14 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 	assert.equal(template('<% each(array, function (i) { %><%= i %><% }) %>', { array : [1, 2, 3], each : each }), '123');
 })();
 
+(function () {
+	template.variable = 'stash';
+
+	assert.equal(template('<b><%= stash.foo %></b><i><%= stash.bar %></i>', { foo : 'foo', bar: 'bar' }), '<b>foo</b><i>bar</i>');
+
+	template.variable = null;
+})();
+
 
 (function () {
 	var escaped = template('<%= html %>');

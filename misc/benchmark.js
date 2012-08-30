@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // ============================================================================
-var template = require('../lib/micro-template.js').template;
+var template = require('../lib/micro-template.js').extended;
 
 // ============================================================================
 // Simple JavaScript Templating
@@ -76,7 +76,7 @@ function measure (fun) {
 		for (var i = 0; i < n; i++) fun();
 		count += n;
 		now = new Date().getTime();
-	} while ( (now - start) < 500);
+	} while ( (now - start) < 1000);
 	return (count / (now - start)) * 1000;
 }
 

@@ -110,17 +110,17 @@ var func = template('aaa <% tmpl.foo %> bbb');
 var result = func({ foo : 'foo' });
 ```
 
-`template.variable` is used to data variable name in template code. And `with` syntax is not used any more. So you can't refer to variable without `tmpl.` prefix.
+`template.variable` is used to data variable name in template code. And `with` syntax is not used any more. So you can't refer to variable without `tmpl.` prefix in this case.
 
 EXTENDED FEATURES
 =================
 
-This package also provides `micro-template/extended` module which includes `include` and `wrapper` function. Of course, this feature can be used on browsers by just copying and pasting `lib/micro-template/extended.js`.
+This package also provides `extended` function which includes `include` and `wrapper` function. Of course, this feature can be used on browsers by just copying and pasting `lib/micro-template.js`.
 
 ## include(name)
 
 ```
-var template = require('micro-template/extended').template;
+var template = require('micro-template').extended;
 
 template('view1', { foo : 'bar' });
 ```

@@ -45,8 +45,8 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 (function () {
 	var escaped = template('<%= html %>');
 	assert.equal(escaped({ html : '<foobar>'}), '&lt;foobar&gt;');
-	assert.equal(escaped({ html : '<">'}), '&lt;&x22;&gt;');
-	assert.equal(escaped({ html : "<'>"}), '&lt;&x27;&gt;');
+	assert.equal(escaped({ html : '<">'}), '&lt;&#x22;&gt;');
+	assert.equal(escaped({ html : "<'>"}), '&lt;&#x27;&gt;');
 
 	var raw = template('<%=raw raw %>');
 	assert.equal(raw({ raw : '<foobar>'}), '<foobar>');

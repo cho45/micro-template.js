@@ -116,7 +116,7 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 })();
 
 (function () {
-	assert.equal(extended('includeA', {}), 'aaa\nbbb\nccc');
+	assert.equal(extended('includeA', {}), 'aaa\nbbb\nccc\nbbb');
 })();
 
 (function () {

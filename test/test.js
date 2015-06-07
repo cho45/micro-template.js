@@ -4,7 +4,7 @@ var assert = require('assert');
 var template = require('../lib/micro-template.js').template;
 var extended = require('../lib/micro-template.js').extended;
 
-template.get = function (id) { return require('fs').readFileSync('test/data-' + id + '.tmpl', 'utf-8') };
+template.get = function (id) { return require('fs').readFileSync('test/' + id + '.tmpl', 'utf-8') };
 
 (function () {
 	var a = template('<b><%= foo %></b><i><%= bar %></i>');
@@ -53,9 +53,9 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 })();
 
 (function () {
-	var test1 = template('test1');
+	var test1 = template('data-test1');
 	assert.equal(typeof test1, 'function');
-	assert.strictEqual(template('test1'), test1);
+	assert.strictEqual(template('data-test1'), test1);
 
 	assert.equal(test1({
 		isFoo : true,
@@ -81,7 +81,7 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 			throw e;
 		}
 	});
-	assert.equal(error, 'TemplateError: ReferenceError: isFoo is not defined (on test1 line 1)');
+	assert.equal(error, 'TemplateError: ReferenceError: isFoo is not defined (on data-test1 line 1)');
 
 	assert.throws(function () {
 		try {
@@ -91,7 +91,7 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 			throw e;
 		}
 	});
-	assert.equal(error, 'TemplateError: ReferenceError: foobar is not defined (on test1 line 2)');
+	assert.equal(error, 'TemplateError: ReferenceError: foobar is not defined (on data-test1 line 2)');
 
 	assert.throws(function () {
 		try {
@@ -101,11 +101,11 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 			throw e;
 		}
 	});
-	assert.equal(error, 'TemplateError: ReferenceError: foobaz is not defined (on test1 line 4)');
+	assert.equal(error, 'TemplateError: ReferenceError: foobaz is not defined (on data-test1 line 4)');
 })();
 
 (function () {
-	var fizzbuzz = template('fizzbuzz');
+	var fizzbuzz = template('data-fizzbuzz');
 	assert.equal(fizzbuzz({ n : 15 }).replace(/\s+/g, ' '), ' 1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz ');
 })();
 
@@ -116,29 +116,33 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 })();
 
 (function () {
-	assert.equal(extended('includeA', {}), 'aaa\nbbb\nccc\nbbb');
+	assert.equal(extended('data-includeA', {}), 'aaa\nbbb\nccc\nbbb');
 })();
 
 (function () {
-	assert.equal(extended('wrapperContent', { foo: 'foo', bar: 'bar' }), '111\n222\n\n333\nfoo\n444\n\n555\nbar\n666\n777');
+	assert.equal(extended('data-subdir', {}), 'startdummywrapper\nbeforeincludesubdir\ndummysubdir\nafterincludesubdir\nenddummywrapper');
+})();
+
+(function () {
+	assert.equal(extended('data-wrapperContent', { foo: 'foo', bar: 'bar' }), '111\n222\n\n333\nfoo\n444\n\n555\nbar\n666\n777');
 
 	assert.throws(function () {
 		try {
-			extended('wrapperContent', { bar: 'xxx' });
+			extended('data-wrapperContent', { bar: 'xxx' });
 		} catch (e) {
 			error = e;
 			throw e;
 		}
 	});
-	assert.equal(error, 'TemplateError: ReferenceError: foo is not defined (on wrapperContent line 4)');
+	assert.equal(error, 'TemplateError: ReferenceError: foo is not defined (on data-wrapperContent line 4)');
 
 	assert.throws(function () {
 		try {
-			extended('wrapperContent', { foo: 'xxx' });
+			extended('data-wrapperContent', { foo: 'xxx' });
 		} catch (e) {
 			error = e;
 			throw e;
 		}
 	});
-	assert.equal(error, 'TemplateError: TemplateError: ReferenceError: bar is not defined (on wrapper line 4) (on wrapperContent line 6)');
+	assert.equal(error, 'TemplateError: TemplateError: ReferenceError: bar is not defined (on data-wrapper line 4) (on data-wrapperContent line 6)');
 })();

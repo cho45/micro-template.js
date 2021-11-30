@@ -174,4 +174,4 @@ node:
 LICENSE
 =======
 
-MIT: http://cho45.github.com/mit-license
+MIT: https://cho45.github.io/mit-license

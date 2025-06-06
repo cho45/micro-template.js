@@ -101,7 +101,7 @@ template.get = function (id) { return require('fs').readFileSync('tmpl/' + id + 
 DEFINE DATA VARIABLE EXPLICITLY
 ================================
 
-By default, micro-template uses `with` syntax to expand data variables. This behavior is almost convenience, but if you want to expressly fast template function, you can do without `with` by sepcify `template.varible`.
+By default, micro-template uses `with` syntax to expand data variables. This behavior is almost convenience, but if you want to expressly fast template function, you can do without `with` by specify `template.varible`.
 
 ```
 template.variable = 'tmpl';

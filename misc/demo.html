@@ -13,6 +13,13 @@
 </head>
 <body>
   <h1>micro-template.js Demo</h1>
+  <label for="template-select">テンプレート例</label>
+  <select id="template-select">
+    <option value="normal">通常（正常終了）</option>
+    <option value="error">3行目でエラー</option>
+    <option value="wrapper">wrapper() 使用例</option>
+  </select>
+
   <label for="template">Template</label>
   <textarea id="template" placeholder="&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;\n&lt;p&gt;&lt;%= message %&gt;&lt;/p&gt;"></textarea>
 
@@ -26,12 +33,37 @@
   <pre id="output"></pre>
 
   <script type="module">
-    // micro-template.js を ESMとしてimport
-    import { template } from "../lib/micro-template.js";
-    
+    import { extended as template } from "../lib/micro-template.js";
     window.template = template;
 
+	template.get = function (name) {
+	  return {
+		wrapper: `foo: <%= foo %>\nThis is wrapper header\n<%=raw content %>\nThis is wrapper footer`
+	  }[name] || '';
+	};
+
+    // テンプレート例
+    const templates = {
+      normal: `<h1><%= title %></h1>\n<p><%= message %></p>`,
+      error: `<h1><%= title %></h1>\n<p><%= message %></p>\n<%= notfound %>`,
+      wrapper: `<% wrapper('wrapper', function () { %>\n<h1>Hello, World!</h1>\n<% }) %>`
+    };
+    const stashes = {
+      normal: {
+        title: "Hello",
+        message: "こんにちは micro-template.js!"
+      },
+      error: {
+        title: "Hello",
+        message: "これはエラー例です"
+      },
+      wrapper: {
+        foo: "タイトル（wrapper用）"
+      }
+    };
+
     // UI
+    const templateSelect = document.getElementById('template-select');
     const templateEl = document.getElementById('template');
     const stashEl = document.getElementById('stash');
     const outputEl = document.getElementById('output');
@@ -55,20 +87,27 @@
         statusEl.textContent = 'OK';
         statusEl.className = '';
       } catch (e) {
-		console.log(e)
-		console.error(e);
+        console.log(e)
+        console.error(e);
         outputEl.textContent = '';
         statusEl.textContent = 'Template error: ' + String(e);
         statusEl.className = 'error';
       }
     }
     renderBtn.addEventListener('click', render);
+
+    // テンプレート切り替え
+    templateSelect.addEventListener('change', () => {
+      const key = templateSelect.value;
+      templateEl.value = templates[key];
+      stashEl.value = JSON.stringify(stashes[key], null, 2);
+      render();
+    });
+
     // デフォルト値
-    templateEl.value = `<h1><%= title %></h1>\n<p><%= message %></p>`;
-    stashEl.value = JSON.stringify({
-      title: "Hello",
-      message: "こんにちは micro-template.js!"
-    }, null, 2);
+    templateSelect.value = 'normal';
+    templateEl.value = templates.normal;
+    stashEl.value = JSON.stringify(stashes.normal, null, 2);
     render();
   </script>
 </body>

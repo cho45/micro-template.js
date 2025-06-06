@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-var assert = require('assert');
-var template = require('../lib/micro-template.js').template;
-var extended = require('../lib/micro-template.js').extended;
+import assert from 'assert';
+import { template, extended } from '../lib/micro-template.js';
+import fs from 'fs';
 
-template.get = function (id) { return require('fs').readFileSync('test/data-' + id + '.tmpl', 'utf-8') };
+// template.get の上書き
+template.get = function (id) { return fs.readFileSync('test/data-' + id + '.tmpl', 'utf-8') };
 
 (function () {
 	var a = template('<b><%= foo %></b><i><%= bar %></i>');
@@ -72,7 +73,7 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 		html : '<b>html</b>'
 	}), "\nfoo&lt;b&gt;az\n");
 
-	var error;
+	let error;
 	assert.throws(function () {
 		try {
 			test1({});
@@ -122,6 +123,7 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 (function () {
 	assert.equal(extended('wrapperContent', { foo: 'foo', bar: 'bar' }), '111\n222\n\n333\nfoo\n444\n\n555\nbar\n666\n777');
 
+	let error;
 	assert.throws(function () {
 		try {
 			extended('wrapperContent', { bar: 'xxx' });
@@ -132,6 +134,7 @@ template.get = function (id) { return require('fs').readFileSync('test/data-' + 
 	});
 	assert.equal(error, 'TemplateError: ReferenceError: foo is not defined (on wrapperContent line 4)');
 
+	error = undefined;
 	assert.throws(function () {
 		try {
 			extended('wrapperContent', { foo: 'xxx' });

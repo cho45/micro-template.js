@@ -17,5 +17,6 @@
     "ejs"
   ],
   "author": "cho45",
-  "license": "MIT"
+  "license": "MIT",
+  "type": "module"
 }

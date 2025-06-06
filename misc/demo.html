@@ -12,24 +12,24 @@
   </style>
 </head>
 <body>
-  <h1>micro-template.js Demo</h1>
-  <label for="template-select">テンプレート例</label>
+  <h1 data-i18n="title">micro-template.js Demo</h1>
+  <label id="template-select-label" for="template-select" data-i18n="templateSelect">Examples:</label>
   <select id="template-select">
-    <option value="normal">通常（正常終了）</option>
-    <option value="error">3行目でエラー</option>
-    <option value="wrapper">wrapper() 使用例</option>
+    <option value="normal" data-i18n="optionNormal">Success</option>
+    <option value="error" data-i18n="optionError">Error on 3rd line</option>
+    <option value="wrapper" data-i18n="optionWrapper">Example using wrapper()</option>
   </select>
 
-  <label for="template">Template</label>
+  <label id="template-label" for="template" data-i18n="template">Template</label>
   <textarea id="template" placeholder="&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;\n&lt;p&gt;&lt;%= message %&gt;&lt;/p&gt;"></textarea>
 
-  <label for="stash">Stash (JSON)</label>
+  <label id="stash-label" for="stash" data-i18n="stash">Stash (JSON)</label>
   <textarea id="stash" placeholder='{"title": "Hello", "message": "こんにちは micro-template.js!"}'></textarea>
 
-  <button id="render">Render</button>
+  <button id="render" data-i18n="render">Render</button>
   <span id="status"></span>
 
-  <label for="output">Output</label>
+  <label id="output-label" for="output" data-i18n="output">Output</label>
   <pre id="output"></pre>
 
   <script type="module">
@@ -42,7 +42,6 @@
 	  }[name] || '';
 	};
 
-    // テンプレート例
     const templates = {
       normal: `<h1><%= title %></h1>\n<p><%= message %></p>`,
       error: `<h1><%= title %></h1>\n<p><%= message %></p>\n<%= notfound %>`,
@@ -51,16 +50,67 @@
     const stashes = {
       normal: {
         title: "Hello",
-        message: "こんにちは micro-template.js!"
+        message: "Hello, micro-template.js!"
       },
       error: {
         title: "Hello",
-        message: "これはエラー例です"
+        message: "This is an error example"
       },
       wrapper: {
-        foo: "タイトル（wrapper用）"
+        foo: "FOO (for wrapper example)",
       }
     };
+
+    // 多言語化対応
+    const I18N = {
+      ja: {
+        title: "micro-template.js デモ",
+        templateSelect: "テンプレート例",
+        template: "テンプレート",
+        stash: "Stash (JSON)",
+        render: "レンダー",
+        output: "出力",
+        optionNormal: "通常（正常終了）",
+        optionError: "3行目でエラー",
+        optionWrapper: "wrapper() 使用例",
+        demoFooter: 'micro-template.jsのデモです。'
+      },
+      us: {
+        title: "micro-template.js Demo",
+        templateSelect: "Template Examples",
+        template: "Template",
+        stash: "Stash (JSON)",
+        render: "Render",
+        output: "Output",
+        optionNormal: "Normal (Success)",
+        optionError: "Error on 3rd line",
+        optionWrapper: "Example using wrapper()",
+        demoFooter: 'This is a demo of micro-template.js.'
+      }
+    };
+    const AVAILABLE_LANGUAGES = new Set(["ja", "us"]);
+    // location.hash でLANGをオーバーライド
+    let langCode = navigator.language.slice(0, 2).toLowerCase();
+    const hashLang = location.hash.replace(/^#/, '');
+    if (hashLang && AVAILABLE_LANGUAGES.has(hashLang)) {
+      langCode = hashLang;
+    }
+    const LANG = AVAILABLE_LANGUAGES.has(langCode) ? langCode : "us";
+
+    // data-i18n属性による一括置換
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (I18N[LANG][key]) {
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+          el.placeholder = I18N[LANG][key];
+        } else {
+          el.innerHTML = I18N[LANG][key];
+        }
+      }
+    });
+
+    // hash変更時にリロードして言語切り替え
+    window.addEventListener('hashchange', () => location.reload());
 
     // UI
     const templateSelect = document.getElementById('template-select');
@@ -110,5 +160,9 @@
     stashEl.value = JSON.stringify(stashes.normal, null, 2);
     render();
   </script>
+  <footer>
+    <p data-i18n="demoFooter"></p>
+    <a href="https://github.com/cho45/micro-template.js>GitHub</a>
+  </footer>
 </body>
 </html>

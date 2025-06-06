@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
 // ============================================================================
-var template = require('../lib/micro-template.js').template;
+import assert from 'assert';
+import { template } from '../lib/micro-template.js';
+import ejs from 'ejs';
+import fs from 'fs';
+import os from 'os';
 
 // ============================================================================
 // Simple JavaScript Templating
@@ -38,16 +42,20 @@ var template = require('../lib/micro-template.js').template;
     // Provide some basic currying to the user
     return data ? fn( data ) : fn;
   };
-})();
+}).call(global);
 // ============================================================================
-var ejs = require('ejs');
+const fizzbuzz = fs.readFileSync('test/data-fizzbuzz.tmpl', 'utf-8');
+const fizzbuzzRaw1 = fizzbuzz.replace(/<%=/g, '<%=raw');
+const fizzbuzzRaw2 = fizzbuzz.replace(/<%=/g, '<%-');
+const fizzbuzzVar  = fizzbuzz.replace(/^/, '<% var n = stash.n; %>');
+const ejsFunc = ejs.compile(fizzbuzzRaw2);
 
-// ============================================================================
-var fizzbuzz = require('fs').readFileSync('test/data-fizzbuzz.tmpl', 'utf-8');
-var fizzbuzzRaw1 = fizzbuzz.replace(/<%=/g, '<%=raw');
-var fizzbuzzRaw2 = fizzbuzz.replace(/<%=/g, '<%-');
-var fizzbuzzVar  = fizzbuzz.replace(/^/, '<% var n = stash.n; %>');
-var ejsFunc = ejs.compile(fizzbuzzRaw2);
+const output1 = template(fizzbuzz, {n: 30}).replace(/\s+/g, ' ');
+const output2 = ejsFunc({n: 30 }).replace(/\s+/g, ' ');
+template.variable = 'stash';
+const output3 = template(fizzbuzzVar, {n: 30}).replace(/\s+/g, ' ');
+assert.equal(output1, output2, 'output should be same');
+assert.equal(output1, output3, 'output should be same');
 
 benchmark({
 	"micro-template" : function () {
@@ -58,7 +66,7 @@ benchmark({
 		template.variable = null;
 		template(fizzbuzz, {n : 300 });
 	},
-	"micro-template (template.variable)" : function () {
+	"micro-template (without `with`)" : function () {
 		template.variable = 'stash';
 		template(fizzbuzzVar, {n : 300 });
 	},
@@ -77,10 +85,12 @@ benchmark({
 // ============================================================================
 // try n counts in 1sec
 function measure (fun) {
-	var now, start = new Date().getTime();
-	var count = 0, n = 500;
+	for (let i = 0; i < 1000; i++) fun(); // warm up
+
+	let now, count = 0, n = 500;
+	const start = new Date().getTime();
 	do {
-		for (var i = 0; i < n; i++) fun();
+		for (let i = 0; i < n; i++) fun();
 		count += n;
 		now = new Date().getTime();
 	} while ( (now - start) < 1000);
@@ -88,15 +98,12 @@ function measure (fun) {
 }
 
 function benchmark (funcs) {
-	var os = require('os');
-	console.log('%s (%s) %s %s', os.type(), os.platform(), os.arch(), os.release());
-	console.log(os.cpus());
+	console.log('  A larger number (count) means faster. A smaller number (msec) means faster.');
+	console.log('%s (%s) %s %s %s %d cpus', os.type(), os.platform(), os.arch(), os.release(), os.cpus()[0].model, os.cpus().length);
+	// console.log(os.cpus());
 
-	var empty = 1000 / measure(function () {});
-	console.log('empty function call: %d msec', empty);
-
-	var result = [];
-	for (var key in funcs) if (funcs.hasOwnProperty(key)) {
+	const result = [];
+	for (const key of Object.keys(funcs)) {
 		console.log('running... %s', key);
 		result.push({ name : key, counts : measure(funcs[key]) });
 	}
@@ -105,6 +112,6 @@ function benchmark (funcs) {
 	console.log('=== result ===');
 
 	for (var i = 0, it; (it = result[i]); i++) {
-		console.log("%d: (%d msec) %s", it.counts.toFixed(1), (1000 / it.counts - (empty * it.counts)).toFixed(3), it.name);
+		console.log("%d: (%d msec) %s", it.counts.toFixed(1), (1000 / it.counts).toFixed(3), it.name);
 	}
 }

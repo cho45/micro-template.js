@@ -46,7 +46,7 @@ SYNOPSIS
 ```
 // foo.js
 window.onload = function () {
-    var html = template('tmpl1', {         isFoo : true,
+    var html = template('tmpl1', {        isFoo : true,
         foobar : 'foobar!!',
         foobaz : 'foobaz!!',
         html : '<marquee>Helloooo</marquee>'
@@ -162,13 +162,28 @@ template('view1', { foo : 'bar' });
 BENCHMARK
 =========
 
-on Browsers:
-
- * http://jsdo.it/cho45/rjwe/fullscreen
-
 node:
 
  * node misc/benchmark.js
+
+```
+A larger number (count) means faster. A smaller number (msec) means faster.
+Linux (linux) x64 6.6.87.1-microsoft-standard-WSL2 13th Gen Intel(R) Core(TM) i7-13700K 24 cpus
+running... micro-template
+running... micro-template (escaped)
+running... micro-template (without `with`)
+running... John Resig's tmpl
+running... ejs.render
+running... ejs.render pre compiled
+=== result ===
+52736.3: (0.019 msec) micro-template (without `with`)
+6226.1: (0.161 msec) John Resig's tmpl
+4771: (0.21 msec) micro-template
+4424.8: (0.226 msec) micro-template (escaped)
+4322.8: (0.231 msec) ejs.render pre compiled
+3853.6: (0.26 msec) ejs.render
+node misc/benchmark.js  7.41s user 0.01s system 101% cpu 7.349 total
+```
 
 
 LICENSE

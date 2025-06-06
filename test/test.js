@@ -145,3 +145,25 @@ template.get = function (id) { return fs.readFileSync('test/data-' + id + '.tmpl
 	});
 	assert.equal(error, 'TemplateError: TemplateError: ReferenceError: bar is not defined (on wrapper line 4) (on wrapperContent line 6)');
 })();
+
+
+ (function singileQuote () {
+ 
+ 	const quotes = [
+ 		`\\`,
+ 		`''`,
+ 		'""',
+ 		`\'\'`,
+ 		'\"\"',
+ 		`\\'\\'`,
+ 		'\\"\\"',
+ 	];
+ 	
+ 
+ 	for (const quote of quotes) {
+ 		const a = template(quote);
+ 		assert.equal(a({}), quote);
+ 	}
+ })();
+ 
+ 

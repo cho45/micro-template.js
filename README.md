@@ -1,6 +1,8 @@
 micro-template.js
 =================
 
+[Demo page (Try in your browser!)](https://cho45.github.io/micro-template.js/misc/demo.html)
+
 https://github.com/cho45/micro-template.js
 
 micro-template is a template engine on JavaScript which like embed js.

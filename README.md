@@ -170,22 +170,42 @@ node:
 * node misc/benchmark.js
 
 ```log
-A larger number (count) means faster. A smaller number (msec) means faster.
-Linux (linux) x64 6.6.87.1-microsoft-standard-WSL2 13th Gen Intel(R) Core(TM) i7-13700K 24 cpus
-running... micro-template
-running... micro-template (escaped)
-running... micro-template (without `with`)
-running... John Resig's tmpl
-running... ejs.render
-running... ejs.render pre compiled
-=== result ===
-52736.3: (0.019 msec) micro-template (without `with`)
-6226.1: (0.161 msec) John Resig's tmpl
-4771: (0.21 msec) micro-template
-4424.8: (0.226 msec) micro-template (escaped)
-4322.8: (0.231 msec) ejs.render pre compiled
-3853.6: (0.26 msec) ejs.render
-node misc/benchmark.js  7.41s user 0.01s system 101% cpu 7.349 total
+> node --expose-gc ./misc/benchmark.js
+
+clk: ~3.04 GHz
+cpu: Apple M1
+runtime: node 20.10.0 (arm64-darwin)
+
+benchmark                         avg (min … max) p75 / p99    (min  top 1%)
+------------------------------------------------- -------------------------------
+micro-template                      32.37 µs/iter  30.04 µs                      
+                           (28.37 µs … 353.13 µs) 139.67 µs                     
+                          (  5.95 kb …   1.03 mb) 159.39 kb █▃▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+micro-template (template.variable)  32.74 µs/iter  30.38 µs                      
+                           (28.75 µs … 406.79 µs) 100.25 µs                     
+                          (  4.70 kb …   1.91 mb) 159.97 kb █▅▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+ejs.render pre compiled            340.85 µs/iter 342.25 µs                      
+                          (331.21 µs … 615.62 µs) 380.46 µs                     
+                          (  8.54 kb … 645.10 kb)  70.75 kb ▃██▆▄▃▃▂▂▃▂▂▃▂▁▁▁▁▁▁▁
+
+John Resig's tmpl                  219.90 µs/iter 222.17 µs   █                 
+                          (207.04 µs … 433.33 µs) 259.62 µs                     
+                          ( 28.23 kb … 401.88 kb) 101.18 kb ▃▆██▇▃▃▂▃▃▄▃▃▃▂▁▂▁▁▁▁
+
+                                   ┌                                            ┐
+                    micro-template ┤ 32.37 s
+micro-template (template.variable) ┤ 32.74 s
+           ejs.render pre compiled ┤■■■■■■■■■■■■■■■■■■■■■s ■■■■■■■■■■■■ 340.85 µ
+                 John Resig's tmpl ┤■■■■■■■■■■■■■■ s■■■■■■ 219.90 µ
+                                   └                                            ┘
+
+summary
+  micro-template
+   1.01x faster than micro-template (template.variable)
+   6.79x faster than John Resig's tmpl
+   10.53x faster than ejs.render pre compiled
 ```
 
 

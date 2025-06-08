@@ -101,19 +101,21 @@ import { template } from 'micro-template';
 template.get = function (id) { return require('fs').readFileSync('tmpl/' + id + '.tmpl', 'utf-8') };
 ```
 
-DEFINE DATA VARIABLE EXPLICITLY
--------------------------------
+DEFINE DATA VARIABLE SCOPE
+----------------------------
 
-By default, micro-template uses `with` syntax to expand data variables. This behavior is almost convenience, but if you want to expressly fast template function, you can do without `with` by specify `template.varible`.
+micro-template now always expands data variables as local variables in the template function. The template API only supports two arguments: the template source/id and the data object. All keys of the data object are available as local variables in the template code.
+
+For example:
 
 ```js
-template.variable = 'tmpl';
-
-var func = template('aaa <% tmpl.foo %> bbb');
-var result = func({ foo : 'foo' });
+const result = template('aaa <% foo %> bbb', { foo: 'bar' });
+// result: 'aaa bar bbb'
 ```
 
-`template.variable` is used to data variable name in template code. And `with` syntax is not used any more. So you can't refer to variable without `tmpl.` prefix in this case.
+You can access all properties of the data object directly as variables inside the template.
+
+**Note:** The previous API that allowed calling `template(tmpl)` to return a function is removed. Always use the two-argument form: `template(tmpl, data)`.
 
 EXTENDED FEATURES
 -----------------
@@ -170,24 +172,43 @@ node:
 * node misc/benchmark.js
 
 ```log
-A larger number (count) means faster. A smaller number (msec) means faster.
-Linux (linux) x64 6.6.87.1-microsoft-standard-WSL2 13th Gen Intel(R) Core(TM) i7-13700K 24 cpus
-running... micro-template
-running... micro-template (escaped)
-running... micro-template (without `with`)
-running... John Resig's tmpl
-running... ejs.render
-running... ejs.render pre compiled
-=== result ===
-52736.3: (0.019 msec) micro-template (without `with`)
-6226.1: (0.161 msec) John Resig's tmpl
-4771: (0.21 msec) micro-template
-4424.8: (0.226 msec) micro-template (escaped)
-4322.8: (0.231 msec) ejs.render pre compiled
-3853.6: (0.26 msec) ejs.render
-node misc/benchmark.js  7.41s user 0.01s system 101% cpu 7.349 total
-```
+> node --expose-gc ./misc/benchmark.js
 
+clk: ~3.03 GHz
+cpu: Apple M1
+runtime: node 20.10.0 (arm64-darwin)
+
+benchmark                         avg (min … max) p75 / p99    (min  top 1%)
+------------------------------------------------- -------------------------------
+micro-template                      24.54 µs/iter  23.04 µs                      
+                           (21.83 µs … 230.92 µs)  67.67 µs                     
+                          ( 56.00  b … 361.68 kb) 146.04 kb ██▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+micro-template (template.variable)  24.65 µs/iter  24.65 µs   █                 
+                            (24.52 µs … 25.17 µs)  24.75 µs ▅▅█   ▅█ ▅ ▅▅       ▅
+                          (945.85  b … 952.58  b) 946.55  b ███▁▁▁██▁█▁██▁▁▁▁▁▁▁█
+
+ejs.render pre compiled            342.25 µs/iter 347.42 µs                      
+                          (328.13 µs … 617.17 µs) 384.12 µs  ▃                 
+                          ( 11.10 kb … 645.10 kb)  72.46 kb ▂███▆▆▄▄▅▄▃▄▃▂▂▂▂▁▁▁▁
+
+John Resig's tmpl                  222.23 µs/iter 229.08 µs                      
+                          (207.71 µs … 428.33 µs) 267.04 µs                     
+                          ( 26.91 kb … 438.41 kb) 101.27 kb ▃▄██▃▃▃▃▄▄▄▃▂▂▁▁▁▁▁▁▁
+
+                                   ┌                                            ┐
+                    micro-template ┤ 24.54 s
+micro-template (template.variable) ┤ 24.65 s
+           ejs.render pre compiled ┤■■■■■■■■■■■■■■■■■■■■■s ■■■■■■■■■■■■ 342.25 µ
+                 John Resig's tmpl ┤■■■■■■■■■■■■■■ s■■■■■■ 222.23 µ
+                                   └                                            ┘
+
+summary
+  micro-template
+   1x faster than micro-template (template.variable)
+   9.06x faster than John Resig's tmpl
+   13.95x faster than ejs.render pre compiled
+```
 
 LICENSE
 -------

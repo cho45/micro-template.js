@@ -10,7 +10,8 @@
   },
   "scripts": {
     "test": "node --test",
-    "serve-demo": "npx serve ."
+    "serve-demo": "npx serve .",
+    "bench": "node --expose-gc ./misc/benchmark.js"
   },
   "keywords": [
     "template",
@@ -19,5 +20,10 @@
   ],
   "author": "cho45",
   "license": "MIT",
-  "type": "module"
+  "type": "module",
+  "optionalDependencies": {
+    "@mitata/counters": "^0.0.8",
+    "ejs": "^3.1.10",
+    "mitata": "^1.0.34"
+  }
 }

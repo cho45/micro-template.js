@@ -80,13 +80,11 @@ SYNTAX
 DESCRIPTION
 -----------
 
-### template(id or source [, data ])
+### template(id or source , data)
 
 If the first argument of template matches `/^[\w\-]+$/`, it is treated as `id` of template. In this case, use `document.getElementById(id).innerHTML` to get source.
 
 Otherwise, the first argument is treated as source directly.
-
-The second argument is optional. If it was NOT supplied, `template()` returns `Function`, otherwise `String`.
 
 
 CUSTOM `get` FUNCTION

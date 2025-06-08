@@ -61,6 +61,11 @@ barplot(() => {
 			template.variable = null;
 			template(fizzbuzz, { n: 300 });
 		});
+		bench('micro-template (not cached)', () => {
+			template.variable = null;
+			template.cache.clear();
+			template(fizzbuzz, { n: 300 });
+		});
 		bench('micro-template (template.variable)', () => {
 			template.variable = 'stash';
 			template(fizzbuzzVar, { n: 300 });

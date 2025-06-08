@@ -47,7 +47,8 @@ SYNOPSIS
 ```js
 // foo.js
 window.onload = function () {
-    var html = template('tmpl1', {        isFoo : true,
+    var html = template('tmpl1', {
+        isFoo : true,
         foobar : 'foobar!!',
         foobaz : 'foobaz!!',
         html : '<marquee>Helloooo</marquee>'

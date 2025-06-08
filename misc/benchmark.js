@@ -44,7 +44,25 @@ import { bench, run, summary, barplot } from 'mitata';
   };
 }).call(global);
 // ============================================================================
-const fizzbuzz = fs.readFileSync('test/data-fizzbuzz.tmpl', 'utf-8');
+const fizzbuzz = `
+<% for (var i = 1; i <= n; i++) { %>
+	<%= \`\${i} =\` %>
+	<% if (i % 15 == 0) { %>
+	FizzBuzz
+	<% } else { %>
+		<% if (i % 3 == 0) { %>
+		Fizz
+		<% } else { %>
+			<% if (i % 5 == 0) { %>
+			Buzz
+			<% } else { %>
+			<%= \`\${i}\` %>
+			<% } %>
+		<% } %>
+	<% } %>
+	/
+<% } %>
+`.trim();
 const fizzbuzzVar  = fizzbuzz.replace(/^/, '<% var n = stash.n; %>');
 const ejsFunc = ejs.compile(fizzbuzz);
 
@@ -52,6 +70,7 @@ const output1 = template(fizzbuzz, {n: 30}).replace(/\s+/g, ' ');
 const output2 = ejsFunc({n: 30 }).replace(/\s+/g, ' ');
 template.variable = 'stash';
 const output3 = template(fizzbuzzVar, {n: 30}).replace(/\s+/g, ' ');
+console.log(output1);
 assert.equal(output1, output2, 'output should be same');
 assert.equal(output1, output3, 'output should be same');
 

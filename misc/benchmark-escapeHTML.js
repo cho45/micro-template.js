@@ -21,6 +21,27 @@ const escapeHTML_self_all = (function () {
 	};
 })();
 
+const escapeHTML_self_all_with_fast_return = (function () {
+	const regexp = /[<>"'&]/;
+	return function (str) {
+		if (typeof str !== 'string') str = String(str);
+		let match = regexp.exec(str);
+		if (match === null) return str;
+		let result = str.slice(0, match.index);
+		for (let i = match.index, len = str.length; i < len; i++) {
+			switch (str.charCodeAt(i)) {
+				case 60: result += '&lt;'; break; // <
+				case 62: result += '&gt;'; break; // >
+				case 34: result += '&#x22;'; break; // "
+				case 39: result += '&#x27;'; break; // '
+				case 38: result += '&amp;'; break; // &
+				default: result += str[i]; break;
+			}
+		}
+		return result;
+	};
+})();
+
 const escapeHTML_self_case = (function () {
 	const regexp = /[<>"'&]/g;
 	return function (str) {
@@ -111,29 +132,36 @@ const escapeHTML_replace_obj = (function () {
 })();
 
 
-const target = 'Hello <world> & "everyone"\'s welcome!'.repeat(1000);
 barplot(() => {
-	summary(() => {
-		bench('escapeHTML_self_case', () => {
-			escapeHTML_self_case(target);
-		});
-		bench('escapeHTML_self_map', () => {
-			escapeHTML_self_map(target);
-		});
-		bench('escapeHTML_self_map_k', () => {
-			escapeHTML_self_map_k(target);
-		});
-		bench('escapeHTML_self_obj', () => {
-			escapeHTML_self_obj(target);
-		});
-		bench('escapeHTML_replace_map', () => {
-			escapeHTML_replace_map(target);
-		});
-		bench('escapeHTML_replace_obj', () => {
-			escapeHTML_replace_obj(target);
-		});
-		bench('escapeHTML_self_all', () => {
-			escapeHTML_self_all(target);
+	[
+		'Hello <world> & "everyone"\'s welcome!',
+		'plain text',
+	].forEach(target => {
+		summary(() => {
+			bench('escapeHTML_self_case', () => {
+				escapeHTML_self_case(target);
+			});
+			bench('escapeHTML_self_map', () => {
+				escapeHTML_self_map(target);
+			});
+			bench('escapeHTML_self_map_k', () => {
+				escapeHTML_self_map_k(target);
+			});
+			bench('escapeHTML_self_obj', () => {
+				escapeHTML_self_obj(target);
+			});
+			bench('escapeHTML_replace_map', () => {
+				escapeHTML_replace_map(target);
+			});
+			bench('escapeHTML_replace_obj', () => {
+				escapeHTML_replace_obj(target);
+			});
+			bench('escapeHTML_self_all', () => {
+				escapeHTML_self_all(target);
+			});
+			bench('escapeHTML_self_all_with_fast_return', () => {
+				escapeHTML_self_all_with_fast_return(target);
+			});
 		});
 	});
 });

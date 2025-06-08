@@ -56,6 +56,7 @@ test('template escapes html', (t) => {
 	assert.strictEqual(template(d, { html: '<foobar>' }), '&lt;foobar&gt;');
 	assert.strictEqual(template(d, { html: '<">'}), '&lt;&#x22;&gt;');
 	assert.strictEqual(template(d, { html: "<'>" }), '&lt;&#x27;&gt;');
+	assert.strictEqual(template(d, { html: "foo & bar" }), 'foo &amp; bar');
 });
 
 test('template raw output', (t) => {

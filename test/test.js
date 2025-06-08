@@ -10,11 +10,6 @@ import fs from 'fs';
 template.get = function (id) { return fs.readFileSync('test/data-' + id + '.tmpl', 'utf-8') };
 
 // --- template 基本テスト ---
-test('template returns a function', (t) => {
-	const a = template('<b><%= foo %></b><i><%= bar %></i>');
-	assert.strictEqual(typeof a, 'function');
-});
-
 test('template renders with data', (t) => {
 	const result = template('<b><%= foo %></b><i><%= bar %></i>', { foo: 'foo', bar: 'bar' });
 	assert.strictEqual(result, '<b>foo</b><i>bar</i>');
@@ -57,27 +52,19 @@ test('template.variable changes context variable', (t) => {
 
 // --- エスケープ・raw ---
 test('template escapes html', (t) => {
-	const escaped = template('<%= html %>');
-	assert.strictEqual(escaped({ html: '<foobar>' }), '&lt;foobar&gt;');
-	assert.strictEqual(escaped({ html: '<">'}), '&lt;&#x22;&gt;');
-	assert.strictEqual(escaped({ html: "<'>" }), '&lt;&#x27;&gt;');
+	const d = '<%= html %>';
+	assert.strictEqual(template(d, { html: '<foobar>' }), '&lt;foobar&gt;');
+	assert.strictEqual(template(d, { html: '<">'}), '&lt;&#x22;&gt;');
+	assert.strictEqual(template(d, { html: "<'>" }), '&lt;&#x27;&gt;');
 });
 
 test('template raw output', (t) => {
-	const raw = template('<%=raw raw %>');
-	assert.strictEqual(raw({ raw: '<foobar>' }), '<foobar>');
+	assert.strictEqual(template('<%=raw raw %>', { raw: '<foobar>' }), '<foobar>');
 });
 
 // --- ファイルテンプレート・エラー ---
-test('template returns cached function for file', (t) => {
-	const test1 = template('test1');
-	assert.strictEqual(typeof test1, 'function');
-	assert.strictEqual(template('test1'), test1);
-});
-
 test('template file: isFoo true', (t) => {
-	const test1 = template('test1');
-	const result = test1({
+	const result = template('test1', {
 		isFoo: true,
 		foobar: 'foo<b>ar',
 		foobaz: 'foo<b>az',
@@ -87,8 +74,7 @@ test('template file: isFoo true', (t) => {
 });
 
 test('template file: isFoo false', (t) => {
-	const test1 = template('test1');
-	const result = test1({
+	const result = template('test1', {
 		isFoo: false,
 		foobar: 'foo<b>ar',
 		foobaz: 'foo<b>az',
@@ -98,32 +84,27 @@ test('template file: isFoo false', (t) => {
 });
 
 test('template file: throws isFoo undefined', (t) => {
-	const test1 = template('test1');
-	assert.throws(() => test1({}), e => e instanceof Error && /TemplateError: ReferenceError: isFoo is not defined \(on test1 line 1\)/.test(e.message));
+	assert.throws(() => template('test1', {}), e => e instanceof Error && /TemplateError: ReferenceError: isFoo is not defined \(on test1 line 1\)/.test(e.message));
 });
 
 test('template file: throws foobar undefined', (t) => {
-	const test1 = template('test1');
-	assert.throws(() => test1({ isFoo: true }), e => e instanceof Error && /TemplateError: ReferenceError: foobar is not defined \(on test1 line 2\)/.test(e.message));
+	assert.throws(() => template('test1', { isFoo: true }), e => e instanceof Error && /TemplateError: ReferenceError: foobar is not defined \(on test1 line 2\)/.test(e.message));
 });
 
 test('template file: throws foobaz undefined', (t) => {
-	const test1 = template('test1');
-	assert.throws(() => test1({ isFoo: false }), e => e instanceof Error && /TemplateError: ReferenceError: foobaz is not defined \(on test1 line 4\)/.test(e.message));
+	assert.throws(() => template('test1', { isFoo: false }), e => e instanceof Error && /TemplateError: ReferenceError: foobaz is not defined \(on test1 line 4\)/.test(e.message));
 });
 
 // --- fizzbuzz ---
 test('template file: fizzbuzz', (t) => {
-	const fizzbuzz = template('fizzbuzz');
-	const result = fizzbuzz({ n: 15 }).replace(/\s+/g, ' ');
+	const result = template('fizzbuzz', { n: 15 }).replace(/\s+/g, ' ');
 	assert.strictEqual(result, ' 1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz ');
 });
 
 // --- extended ---
 test('extended basic', (t) => {
-	const a = extended('<b><%= foo %></b><i><%= bar %></i>');
-	assert.strictEqual(typeof a, 'function');
-	assert.strictEqual(a({ foo: 'foo', bar: 'bar' }), '<b>foo</b><i>bar</i>');
+	const result = extended('<b><%= foo %></b><i><%= bar %></i>', { foo: 'foo', bar: 'bar' });
+	assert.strictEqual(result, '<b>foo</b><i>bar</i>');
 });
 
 test('extended includeA', (t) => {
@@ -172,16 +153,12 @@ test('template handles various quotes', (t) => {
 		'\\"\\"',
 	];
 	for (const quote of quotes) {
-		const a = template(quote);
-		assert.strictEqual(a({}), quote);
+		assert.strictEqual(template(quote, {}), quote);
 	}
 });
 
 // --- エッジケース・追加テスト ---
 test('empty template returns empty string', (t) => {
-	const fn = template('');
-	assert.strictEqual(typeof fn, 'function');
-	assert.strictEqual(fn({}), '');
 	assert.strictEqual(template('', {}), '');
 });
 
@@ -201,64 +178,57 @@ test('template with unclosed if block throws syntax error', (t) => {
 });
 
 test('escape all special chars', (t) => {
-	const escaped = template('<%= html %>');
-	assert.strictEqual(escaped({ html: '&<>\'"' }), '&amp;&lt;&gt;&#x27;&#x22;');
+	const escaped = template('<%= html %>', { html: '&<>\'"' });
+	assert.strictEqual(escaped, '&amp;&lt;&gt;&#x27;&#x22;');
 });
 
 test('escape already escaped string', (t) => {
-	const escaped = template('<%= html %>');
-	assert.strictEqual(escaped({ html: '&amp;' }), '&amp;amp;');
+	const escaped = template('<%= html %>', { html: '&amp;' });
+	assert.strictEqual(escaped, '&amp;amp;');
 });
 
 test('output number, null, undefined, boolean', (t) => {
-	const t1 = template('<%= foo %>');
-	assert.strictEqual(t1({ foo: 0 }), '0');
-	assert.strictEqual(t1({ foo: null }), 'null');
-	assert.strictEqual(t1({ foo: undefined }), 'undefined');
-	assert.strictEqual(t1({ foo: true }), 'true');
+	const t1 = template('<%= foo %>', { foo: 0 });
+	assert.strictEqual(t1, '0');
+	assert.strictEqual(template('<%= foo %>', { foo: null }), 'null');
+	assert.strictEqual(template('<%= foo %>', { foo: undefined }), 'undefined');
+	assert.strictEqual(template('<%= foo %>', { foo: true }), 'true');
 });
 
 test('output object and array', (t) => {
-	const t2 = template('<%= foo %>');
-	assert.strictEqual(t2({ foo: { bar: 1 } }), '[object Object]');
-	assert.strictEqual(t2({ foo: [1,2,3] }), '1,2,3');
+	assert.strictEqual(template('<%= foo %>', { foo: { bar: 1 } }), '[object Object]');
+	assert.strictEqual(template('<%= foo %>', { foo: [1,2,3] }), '1,2,3');
 });
 
 test('reference not found throws', (t) => {
-	const t3 = template('<%= notfound %>');
-	assert.throws(() => t3({}), e =>
+	assert.throws(() => template('<%= notfound %>', {}), e =>
 		e instanceof Error && /TemplateError: ReferenceError: notfound is not defined \(on template\(string\) line 1\)/.test(e.message)
 	);
 });
 
 test('template with explicit throw', (t) => {
-	const t4 = template('<% throw new Error("fail") %>');
-	assert.throws(() => t4({}), e => e instanceof Error && /TemplateError: Error: fail/.test(e.message));
+	assert.throws(() => template('<% throw new Error("fail") %>', {}), e => e instanceof Error && /TemplateError: Error: fail/.test(e.message));
 });
 
 test('include circular reference throws', (t) => {
 	const origGet = template.get;
 	template.get = id => id === 'A' ? '<% include("B") %>' : '<% include("A") %>';
-	const t5 = extended('A');
-	assert.throws(() => t5({}), e => e instanceof Error && /Maximum call stack|stack|circular/i.test(e.message));
+	assert.throws(() => extended('A', {}), e => e instanceof Error && /Maximum call stack|stack|circular/i.test(e.message));
 	template.get = origGet;
 });
 
 test('wrapper nested', (t) => {
 	const origGet = template.get;
 	template.get = id => id === 'outer' ? 'OUT<% wrapper("inner", function(){ %>IN<%= foo %><% }) %>OUT' : 'INNER<%=raw content %>INNER';
-	const t6 = extended('outer');
-	assert.strictEqual(t6({ foo: 'X' }), 'OUTINNERINXINNEROUT');
+	assert.strictEqual(extended('outer', { foo: 'X' }), 'OUTINNERINXINNEROUT');
 	template.get = origGet;
 });
 
 test('include/wrapper with missing args', (t) => {
 	const origGet = template.get;
 	template.get = id => id === 'inc' ? '<% include("B") %>' : '';
-	const t7 = extended('inc');
-	assert.throws(() => t7({}), e =>
-		e instanceof Error && (/Maximum call stack|stack|circular|TemplateError/i.test(e.message))
-	);
+	const r = extended('inc', {});
+	assert.strictEqual(r, '');
 	template.get = origGet;
 });
 
@@ -270,14 +240,12 @@ test('template id with special chars', (t) => {
 });
 
 test('template with ES6 syntax', (t) => {
-	const t8 = template('<% let x = 1; const y = 2; %><%= x + y %>');
-	assert.strictEqual(t8({}), '3');
+	assert.strictEqual(template('<% let x = 1; const y = 2; %><%= x + y %>', {}), '3');
 });
 
 test('template with consecutive script tags', (t) => {
-	const t1 = template('<% foo %><% bar %>');
 	let called = [];
-	t1({
+	template('<% foo %><% bar %>', {
 		get foo() { called.push('foo'); },
 		get bar() { called.push('bar'); }
 	});

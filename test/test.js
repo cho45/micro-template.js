@@ -273,3 +273,14 @@ test('template with ES6 syntax', (t) => {
 	const t8 = template('<% let x = 1; const y = 2; %><%= x + y %>');
 	assert.strictEqual(t8({}), '3');
 });
+
+test('template with consecutive script tags', (t) => {
+	const t1 = template('<% foo %><% bar %>');
+	let called = [];
+	t1({
+		get foo() { called.push('foo'); },
+		get bar() { called.push('bar'); }
+	});
+	assert.deepStrictEqual(called, ['foo', 'bar']);
+	assert.strictEqual(template('<%= foo %><%= bar %>', { foo: 'foo', bar: 'bar' }), 'foobar');
+});

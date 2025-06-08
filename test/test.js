@@ -225,6 +225,7 @@ test('wrapper nested', (t) => {
 });
 
 test('include/wrapper with missing args', (t) => {
+	template.cache.clear();
 	const origGet = template.get;
 	template.get = id => id === 'inc' ? '<% include("B") %>' : '';
 	const r = extended('inc', {});

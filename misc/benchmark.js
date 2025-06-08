@@ -61,13 +61,17 @@ barplot(() => {
 			template.variable = null;
 			template(fizzbuzz, { n: 300 });
 		});
-		bench('micro-template (without `with`)', () => {
+		bench('micro-template (template.variable)', () => {
 			template.variable = 'stash';
 			template(fizzbuzzVar, { n: 300 });
 		});
 		bench('ejs.render pre compiled', () => {
 			ejsFunc({ n: 300 });
 		});
+		bench("John Resig's tmpl", () => {
+			tmpl(fizzbuzz, {n : 300 });
+		});
+
 	});
 });
 

@@ -101,19 +101,21 @@ import { template } from 'micro-template';
 template.get = function (id) { return require('fs').readFileSync('tmpl/' + id + '.tmpl', 'utf-8') };
 ```
 
-DEFINE DATA VARIABLE EXPLICITLY
--------------------------------
+DEFINE DATA VARIABLE SCOPE
+----------------------------
 
-By default, micro-template uses `with` syntax to expand data variables. This behavior is almost convenience, but if you want to expressly fast template function, you can do without `with` by specify `template.varible`.
+micro-template now always expands data variables as local variables in the template function. The template API only supports two arguments: the template source/id and the data object. All keys of the data object are available as local variables in the template code.
+
+For example:
 
 ```js
-template.variable = 'tmpl';
-
-var func = template('aaa <% tmpl.foo %> bbb');
-var result = func({ foo : 'foo' });
+const result = template('aaa <% foo %> bbb', { foo: 'bar' });
+// result: 'aaa bar bbb'
 ```
 
-`template.variable` is used to data variable name in template code. And `with` syntax is not used any more. So you can't refer to variable without `tmpl.` prefix in this case.
+You can access all properties of the data object directly as variables inside the template.
+
+**Note:** The previous API that allowed calling `template(tmpl)` to return a function is removed. Always use the two-argument form: `template(tmpl, data)`.
 
 EXTENDED FEATURES
 -----------------

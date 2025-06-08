@@ -1,6 +1,6 @@
 {
   "name": "micro-template",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "micro template engine",
   "main": "lib/micro-template.js",
   "homepage": "https://github.com/cho45/micro-template.js",

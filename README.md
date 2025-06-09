@@ -25,8 +25,6 @@ SYNOPSIS
 	<head>
 		<title></title>
 		<meta charset="utf-8"/>
-		<script type="text/javascript" src="micro-template.js"></script>
-		<script type="text/javascript" src="foo.js"></script>
 	</head>
 	<body>
 		<script type="application/x-template" id="tmpl1">
@@ -39,6 +37,11 @@ SYNOPSIS
 
 				<%=raw html %>
 			</div>
+		</script>
+		<script type="module">
+			import { extended as template } from './lib/micro-template.js';
+			console.log('micro-template.js loaded', template);
+			console.log('Template example:', template('tmpl1', { isFoo: true, foobar: "a", foobaz: "b" }));
 		</script>
 	</body>
 </html>

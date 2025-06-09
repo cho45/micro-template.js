@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>micro-template.js Landing Page</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js" defer></script>
+	<style>
+		html {
+			background: #f8fafc;
+		}
+
+		body {
+			background: #fff;
+			color: #222;
+			font-family: 'Fira Mono', 'Menlo', 'Consolas', 'monospace', 'sans-serif';
+			margin: 0 auto;
+			max-width: 820px;
+			padding: 2.5em 1.5em 1.5em 1.5em;
+			border-radius: 12px;
+			box-shadow: 0 4px 32px #0001;
+		}
+
+		header {
+			text-align: center;
+			margin-bottom: 2.5em;
+		}
+
+		h1 {
+			font-size: 2.5em;
+			letter-spacing: -1px;
+			margin-bottom: 0.2em;
+			color: #222;
+		}
+
+		.subtitle {
+			color: #2d8f6f;
+			font-size: 1.1em;
+			margin-top: 0;
+			margin-bottom: 0.5em;
+			font-family: 'Fira Mono', 'Menlo', 'Consolas', 'monospace', 'sans-serif';
+		}
+
+		h2 {
+			color: #2d8f6f;
+			font-size: 1.3em;
+			margin-top: 2em;
+			margin-bottom: 0.7em;
+			border-left: 4px solid #2d8f6f;
+			padding-left: 0.5em;
+			letter-spacing: 0.5px;
+		}
+
+		ul {
+			padding-left: 1.5em;
+			margin-bottom: 1.5em;
+		}
+
+		li {
+			margin-bottom: 0.5em;
+			line-height: 1.7;
+		}
+
+		.usage {
+			margin-bottom: 2.5em;
+		}
+
+		.usage-blocks {
+		}
+
+		.usage-block {
+			background: #f6f8fa;
+			border-radius: 8px;
+			padding: 1em 1em 0.5em 1em;
+			margin-bottom: 1em;
+			box-shadow: 0 2px 8px #0001;
+		}
+
+		.usage-block h3 {
+			margin-top: 0;
+			color: #eab308;
+			font-size: 1.1em;
+			letter-spacing: 0.2px;
+		}
+
+		pre {
+			background: #f3f3f3;
+			color: #2563eb;
+			border-radius: 6px;
+			padding: 1em;
+			font-size: 0.98em;
+			overflow-x: auto;
+			margin: 0 0 1em 0;
+			border: 1px solid #e5e7eb;
+		}
+
+		code {
+			font-family: inherit;
+		}
+
+		.links {
+			text-align: center;
+			margin: 2.5em 0 2em 0;
+		}
+
+		a.button {
+			display: inline-block;
+			padding: 0.7em 1.7em;
+			background: linear-gradient(90deg, #2d8f6f 0%, #38bdf8 100%);
+			color: #fff;
+			font-weight: bold;
+			border-radius: 6px;
+			text-decoration: none;
+			margin: 0 0.7em 0.7em 0;
+			font-size: 1.1em;
+			letter-spacing: 0.5px;
+			box-shadow: 0 2px 8px #0001;
+			transition: background 0.2s, color 0.2s;
+		}
+
+		a.button:hover {
+			background: linear-gradient(90deg, #eab308 0%, #2d8f6f 100%);
+			color: #fff;
+		}
+
+		.demo {
+			margin-bottom: 2.5em;
+		}
+
+		.demo-iframe {
+			width: 100%;
+			height: 480px;
+			border: none;
+			border-radius: 8px;
+			box-shadow: 0 2px 16px #0001;
+			background: #fff;
+			margin-top: 1em;
+		}
+
+		footer {
+			text-align: center;
+			color: #888;
+			font-size: 0.98em;
+			margin-top: 2.5em;
+			padding-bottom: 1em;
+		}
+
+		footer a {
+			color: #2563eb;
+			text-decoration: underline;
+			font-weight: bold;
+			transition: color 0.2s;
+		}
+
+		footer a:hover {
+			color: #eab308;
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<h1>micro-template.js</h1>
+		<p class="subtitle">A minimal, blazing fast JavaScript template engine for hackers.</p>
+	</header>
+	<section class="features">
+		<h2>Features</h2>
+		<ul>
+			<li>Ultra-lightweight and extremely fast</li>
+			<li>All output is HTML-escaped by default for security</li>
+			<li>Shows template line numbers on errors for easy debugging</li>
+			<li>Supports extensions (<code>include</code> / <code>wrapper</code>)</li>
+		</ul>
+	</section>
+	<section class="usage">
+		<h2>Usage Example</h2>
+		<div class="usage-blocks">
+			<div class="usage-block">
+				<h3>Basic</h3>
+				<pre><code class="language-js">import { template } from 'micro-template';
+
+const result = template('&lt;div&gt;&lt;%= message %&gt;&lt;/div&gt;', { message: 'Hello, inline!' });
+console.log(result); // &lt;div&gt;Hello, inline!&lt;/div&gt;
+</code></pre>
+			</div>
+			<div class="usage-block">
+				<h3>In HTML</h3>
+				<pre><code class="language-html">&lt;script type="application/x-template" id="tmpl1"&gt;
+  &lt;div&gt;&lt;%= message %&gt;&lt;/div&gt;
+&lt;/script&gt;
+&lt;script type="module"&gt;
+  import { extended as template } from './lib/micro-template.js';
+  const html = template('tmpl1', { message: 'Hello, world!' });
+  document.body.innerHTML += html;
+&lt;/script&gt;</code></pre>
+			</div>
+			<div class="usage-block">
+				<h3>In Node.js</h3>
+				<pre><code class="language-js">import { template } from 'micro-template';
+template.get = id =&gt; require('fs').readFileSync('tmpl/' + id + '.tmpl', 'utf-8');
+
+const result = template('tmpl1', { message: 'Hello, Node!' });
+console.log(result);</code></pre>
+			</div>
+		</div>
+	</section>
+	<section class="links">
+		<a class="button" href="https://github.com/cho45/micro-template.js" target="_blank">GitHub</a>
+		<a class="button" href="https://cho45.github.io/micro-template.js/misc/demo.html" target="_blank">Demo Page</a>
+	</section>
+	<footer>
+		<span>&copy; cho45 / <a href="https://github.com/cho45/micro-template.js" target="_blank">micro-template.js</a>
+			- MIT License</span>
+	</footer>
+	<script type="application/x-template" id="tmpl1">
+		<div><%= message %></div>
+	</script>
+	<script type="module">
+		import { extended as template } from './lib/micro-template.js';
+		console.log('micro-template.js loaded', template);
+		console.log('Template example:', template('tmpl1', { message: 'Hello, world!' }));
+	</script>
+</body>
+
+</html>

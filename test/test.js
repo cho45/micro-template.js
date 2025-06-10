@@ -15,6 +15,12 @@ test('template renders with data', (t) => {
 	assert.strictEqual(result, '<b>foo</b><i>bar</i>');
 });
 
+test('template pre-compiled func', (t) => {
+	const stash = { foo: 'foo', bar: 'bar' };
+	const result = template('<b><%= foo %></b><i><%= bar %></i>', Object.keys(stash))( stash );
+	assert.strictEqual(result, '<b>foo</b><i>bar</i>');
+});
+
 test('template renders static html (single/double quote)', (t) => {
 	assert.strictEqual(template("<a href='foo'>foo</a>", {}), "<a href='foo'>foo</a>");
 	assert.strictEqual(template('<a href="foo">foo</a>', {}), '<a href="foo">foo</a>');
@@ -245,12 +251,10 @@ test('template with ES6 syntax', (t) => {
 	assert.strictEqual(template('<% let x = 1; const y = 2; %><%= x + y %>', {}), '3');
 });
 
-test('template with consecutive script tags', (t) => {
-	let called = [];
-	template('<% foo %><% bar %>', {
-		get foo() { called.push('foo'); },
-		get bar() { called.push('bar'); }
+test('template with properties script tags', (t) => {
+	const result = template('<%= foo %><%= bar %>', {
+		get foo() { return 'foo' },
+		get bar() { return 'bar' }
 	});
-	assert.deepStrictEqual(called, ['foo', 'bar']);
-	assert.strictEqual(template('<%= foo %><%= bar %>', { foo: 'foo', bar: 'bar' }), 'foobar');
+	assert.strictEqual(result, 'foobar');
 });

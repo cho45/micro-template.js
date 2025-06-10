@@ -65,20 +65,26 @@ const fizzbuzz = `
 `.trim();
 const fizzbuzzVar  = fizzbuzz.replace(/^/, '<% var n = stash.n; %>');
 const ejsFunc = ejs.compile(fizzbuzz);
+const compiled = template(fizzbuzz, ['n']);
 
 const output1 = template(fizzbuzz, {n: 30}).replace(/\s+/g, ' ');
 const output2 = ejsFunc({n: 30 }).replace(/\s+/g, ' ');
 template.variable = 'stash';
 const output3 = template(fizzbuzzVar, {n: 30}).replace(/\s+/g, ' ');
+const output4 = compiled({ n: 30 }).replace(/\s+/g, ' ');
 console.log(output1);
 assert.equal(output1, output2, 'output should be same');
 assert.equal(output1, output3, 'output should be same');
+assert.equal(output1, output4, 'output should be same');
 
 barplot(() => {
 	summary(() => {
 		bench('micro-template', () => {
 			template.variable = null;
 			template(fizzbuzz, { n: 300 });
+		});
+		bench('micro-template pre compiled', () => {
+			compiled({ n: 300 });
 		});
 		bench('micro-template (not cached)', () => {
 			template.variable = null;

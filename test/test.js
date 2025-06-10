@@ -15,7 +15,7 @@ test('template renders with data', (t) => {
 	assert.strictEqual(result, '<b>foo</b><i>bar</i>');
 });
 
-test('tempalte pre-compiled func', (t) => {
+test('template pre-compiled func', (t) => {
 	const stash = { foo: 'foo', bar: 'bar' };
 	const result = template('<b><%= foo %></b><i><%= bar %></i>', Object.keys(stash))( stash );
 	assert.strictEqual(result, '<b>foo</b><i>bar</i>');

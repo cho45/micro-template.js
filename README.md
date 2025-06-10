@@ -182,6 +182,7 @@ node:
 
 * node misc/benchmark.js
 
+
 ```
 > node --expose-gc ./misc/benchmark.js
 
@@ -226,6 +227,7 @@ micro-template (template.variable) ┤ 20.91 s
                                    └                                            ┘
 
 summary
+
   micro-template pre compiled
    1.03x faster than micro-template (template.variable)
    1.05x faster than micro-template

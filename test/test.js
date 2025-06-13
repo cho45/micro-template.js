@@ -21,6 +21,17 @@ test('template pre-compiled func', (t) => {
 	assert.strictEqual(result, '<b>foo</b><i>bar</i>');
 });
 
+test('extended renders with data', (t) => {
+	const result = extended('<b><%= foo %></b><i><%= bar %></i>', { foo: 'foo', bar: 'bar' });
+	assert.strictEqual(result, '<b>foo</b><i>bar</i>');
+});
+
+test('extended pre-compiled func', (t) => {
+	const stash = { foo: 'foo', bar: 'bar' };
+	const result = extended('<b><%= foo %></b><i><%= bar %></i>', Object.keys(stash))( stash );
+	assert.strictEqual(result, '<b>foo</b><i>bar</i>');
+});
+
 test('template renders static html (single/double quote)', (t) => {
 	assert.strictEqual(template("<a href='foo'>foo</a>", {}), "<a href='foo'>foo</a>");
 	assert.strictEqual(template('<a href="foo">foo</a>', {}), '<a href="foo">foo</a>');
@@ -227,6 +238,13 @@ test('include circular reference throws', (t) => {
 test('wrapper nested', (t) => {
 	const origGet = template.get;
 	template.get = id => id === 'outer' ? 'OUT<% wrapper("inner", function(){ %>IN<%= foo %><% }) %>OUT' : 'INNER<%=raw content %>INNER';
+	assert.strictEqual(extended('outer', { foo: 'X' }), 'OUTINNERINXINNEROUT');
+	template.get = origGet;
+});
+
+test('wrapper nested lambda', (t) => {
+	const origGet = template.get;
+	template.get = id => id === 'outer' ? 'OUT<% wrapper("inner", () => { %>IN<%= foo %><% }) %>OUT' : 'INNER<%=raw content %>INNER';
 	assert.strictEqual(extended('outer', { foo: 'X' }), 'OUTINNERINXINNEROUT');
 	template.get = origGet;
 });

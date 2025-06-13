@@ -159,6 +159,34 @@ test('extended wrapperContent throws bar undefined', (t) => {
 	assert.match(error.message, /TemplateError: ReferenceError: bar is not defined \(on wrapper line 4\) \(on wrapperContent line 6\)/);
 });
 
+test('extended wrapperContent throws foo undefined (line number check)', (t) => {
+	let error;
+	assert.throws(() => {
+		try {
+			extended('wrapperContent', { bar: 'xxx' });
+		} catch (e) {
+			error = e;
+			throw e;
+		}
+	});
+	// wrapperContent line 4 で foo, wrapper line 4 で bar
+	assert.match(error.message, /TemplateError: ReferenceError: foo is not defined \(on wrapperContent line 4\)/);
+});
+
+test('extended wrapperContent throws bar undefined (wrapper line number check)', (t) => {
+	let error;
+	assert.throws(() => {
+		try {
+			extended('wrapperContent', { foo: 'xxx' });
+		} catch (e) {
+			error = e;
+			throw e;
+		}
+	});
+	// wrapper line 4 で bar, wrapperContent line 6 で呼ばれる
+	assert.match(error.message, /TemplateError: ReferenceError: bar is not defined \(on wrapper line 4\) \(on wrapperContent line 6\)/);
+});
+
 // --- シングルクォート・エスケープ ---
 test('template handles various quotes', (t) => {
 	const quotes = [
@@ -220,7 +248,7 @@ test('output object and array', (t) => {
 
 test('reference not found throws', (t) => {
 	assert.throws(() => template('<%= notfound %>', {}), e =>
-		e instanceof Error && /TemplateError: ReferenceError: notfound is not defined \(on template\(string\) line 1\)/.test(e.message)
+		e instanceof Error && /TemplateError: ReferenceError: notfound is not defined \(on template-\w+ line 1\)/.test(e.message)
 	);
 });
 

@@ -4,11 +4,102 @@
   <meta charset="UTF-8">
   <title>micro-template.js Demo</title>
   <style>
-    body { font-family: sans-serif; margin: 2em; }
-    textarea { width: 100%; height: 7em; margin-bottom: 1em; font-family: monospace; }
-    pre { background: #f8f8f8; padding: 1em; border: 1px solid #ccc; min-height: 3em; }
-    label { font-weight: bold; display: block; margin-top: 1em; }
-    .error { color: red; font-weight: bold; }
+    html {
+      background: #f8fafc;
+    }
+    body {
+      background: #fff;
+      color: #222;
+      font-family: 'Fira Mono', 'Menlo', 'Consolas', 'monospace', 'sans-serif';
+      margin: 0 auto;
+      max-width: 820px;
+      padding: 2.5em 1.5em 1.5em 1.5em;
+      border-radius: 12px;
+      box-shadow: 0 4px 32px #0001;
+    }
+    h1 {
+      font-size: 2.2em;
+      letter-spacing: -1px;
+      margin-bottom: 0.2em;
+      color: #222;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 1em;
+      color: #2d8f6f;
+    }
+    select, textarea, button {
+      font-family: inherit;
+      font-size: 1em;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      padding: 0.5em;
+      margin-bottom: 1em;
+      box-sizing: border-box;
+    }
+    textarea {
+      width: 100%;
+      height: 7em;
+      margin-bottom: 1em;
+      font-family: monospace;
+      background: #f6f8fa;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      padding: 1em;
+      font-size: 1em;
+    }
+    pre {
+      background: #f3f3f3;
+      color: #2563eb;
+      border-radius: 6px;
+      padding: 1em;
+      font-size: 0.98em;
+      overflow-x: auto;
+      margin: 0 0 1em 0;
+      border: 1px solid #e5e7eb;
+      min-height: 3em;
+    }
+    button {
+      display: inline-block;
+      padding: 0.7em 1.7em;
+      background: linear-gradient(90deg, #2d8f6f 0%, #38bdf8 100%);
+      color: #fff;
+      font-weight: bold;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 1.1em;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px #0001;
+      border: none;
+      transition: background 0.2s, color 0.2s;
+      margin-bottom: 1em;
+      cursor: pointer;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #eab308 0%, #2d8f6f 100%);
+      color: #fff;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      color: #888;
+      font-size: 0.98em;
+      margin-top: 2.5em;
+      padding-bottom: 1em;
+    }
+    footer a {
+      color: #2563eb;
+      text-decoration: underline;
+      font-weight: bold;
+      transition: color 0.2s;
+    }
+    footer a:hover {
+      color: #eab308;
+    }
   </style>
 </head>
 <body>

@@ -22,3 +22,5 @@ jobs:
         run: npm ci
       - name: Run tests
         run: node --test
+      - name: Run type definition tests
+        run: npm run test:types

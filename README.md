@@ -22,35 +22,35 @@ SYNOPSIS
 ```ejs
 <!DOCTYPE html>
 <html>
-	<head>
-		<title></title>
-		<meta charset="utf-8"/>
-	</head>
-	<body>
-		<script type="application/x-template" id="tmpl1">
-			<div class='foobar' id="aaa">
-				<% if (isFoo) { %>
-				<%= foobar %>
-				<% } else { %>
-				<%= foobaz %>
-				<% } %>
+<head>
+  <meta charset="utf-8"/>
+  <title>micro-template.js test</title>
+</head>
+<body>
+  <script type="application/x-template" id="tmpl1">
+    <div class='foobar' id="aaa">
+      <% if (isFoo) { %>
+      <%= foobar %>
+      <% } else { %>
+      <%= foobaz %>
+      <% } %>
 
-				<%=raw html %>
-			</div>
-		</script>
-		<script type="module">
-			import { extended as template } from 'https://cdn.jsdelivr.net/npm/micro-template@2.1.2/lib/micro-template.js';
-			console.log('micro-template.js loaded', template);
-			console.log('Template example:', template('tmpl1', { isFoo: true, foobar: "a", foobaz: "b" }));
-      var html = template('tmpl1', {
-          isFoo : true,
-          foobar : 'foobar!!',
-          foobaz : 'foobaz!!',
-          html : '<marquee>Helloooo</marquee>'
-      });
-      console.log(html);
-		</script>
-	</body>
+      <%=raw html %>
+    </div>
+  </script>
+  <script type="module">
+    import { extended as template } from 'https://cdn.jsdelivr.net/npm/micro-template@2.1.2/lib/micro-template.js';
+    console.log('micro-template.js loaded', template);
+    console.log('Template example:', template('tmpl1', { isFoo: true, foobar: "a", foobaz: "b" }));
+    let html = template('tmpl1', {
+        isFoo : true,
+        foobar : 'foobar!!',
+        foobaz : 'foobaz!!',
+        html : '<marquee>Helloooo</marquee>'
+    });
+    console.log(html);
+  </script>
+</body>
 </html>
 ```
 

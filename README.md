@@ -39,37 +39,37 @@ SYNOPSIS
 			</div>
 		</script>
 		<script type="module">
-			import { extended as template } from './lib/micro-template.js';
+			import { extended as template } from 'https://cdn.jsdelivr.net/npm/micro-template@2.1.2/lib/micro-template.js';
 			console.log('micro-template.js loaded', template);
 			console.log('Template example:', template('tmpl1', { isFoo: true, foobar: "a", foobaz: "b" }));
+      var html = template('tmpl1', {
+          isFoo : true,
+          foobar : 'foobar!!',
+          foobaz : 'foobaz!!',
+          html : '<marquee>Helloooo</marquee>'
+      });
+      console.log(html);
 		</script>
 	</body>
 </html>
 ```
 
-```js
-// foo.js
-window.onload = function () {
-    var html = template('tmpl1', {
-        isFoo : true,
-        foobar : 'foobar!!',
-        foobaz : 'foobaz!!',
-        html : '<marquee>Helloooo</marquee>'
-    });
-    console.log(html);
-};
-```
-
 ### on node.js:
 
+```
+npm install micro-template
+```
+
 ```js
+import fs from 'node:fs';
 import { template } from 'micro-template';
-template.get = function (id) { return require('fs').readFileSync('tmpl/' + id + '.tmpl', 'utf-8') };
+template.get = (id) => fs.readFileSync(`tmpl/${id}.tmpl`, 'utf-8');
 
 const result = template('part1', {
   foo : 'bar',
   baz : 'piyo'
 });
+conole.log(result)
 ```
 
 SYNTAX

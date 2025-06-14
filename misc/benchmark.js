@@ -5,7 +5,7 @@ import assert from 'assert';
 import { template } from '../lib/micro-template.js';
 import ejs from 'ejs';
 import fs from 'fs';
-import { bench, run, summary, barplot } from 'mitata';
+import { bench, run, summary, barplot, do_not_optimize } from 'mitata';
 
 // ============================================================================
 // Simple JavaScript Templating
@@ -77,6 +77,7 @@ assert.equal(output1, output2, 'output should be same');
 assert.equal(output1, output3, 'output should be same');
 assert.equal(output1, output4, 'output should be same');
 
+let counter = 0;
 barplot(() => {
 	summary(() => {
 		bench('micro-template', () => {
@@ -88,15 +89,18 @@ barplot(() => {
 		});
 		bench('micro-template (not cached)', () => {
 			template.variable = null;
-			template.cache.clear();
-			template(fizzbuzz, { n: 300 });
+			template.cache.clear(); // これだけだと V8 の最適化が走るので、counter で少しずつ変える
+			template(fizzbuzz + (counter++), { n: 300 });
 		});
 		bench('micro-template (template.variable)', () => {
 			template.variable = 'stash';
 			template(fizzbuzzVar, { n: 300 });
 		});
-		bench('ejs.render pre compiled', () => {
+		bench('ejs.compile (pre compiled)', () => {
 			ejsFunc({ n: 300 });
+		});
+		bench('ejs.render', () => {
+			ejs.render(fizzbuzz, { n: 300 });
 		});
 		bench("John Resig's tmpl", () => {
 			tmpl(fizzbuzz, {n : 300 });

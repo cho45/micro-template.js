@@ -252,6 +252,18 @@ test('reference not found throws', (t) => {
 	);
 });
 
+test('TemplateError の cause プロパティが正しいこと', (t) => {
+	let thrownError;
+	assert.throws(() => {
+		template('<%= notfound %>', {});
+	}, e => {
+		thrownError = e;
+		return e instanceof Error && /TemplateError: ReferenceError: notfound is not defined/.test(e.message);
+	});
+	assert(thrownError.cause instanceof ReferenceError);
+	assert.strictEqual(thrownError.cause.message, 'notfound is not defined');
+});
+
 test('template with explicit throw', (t) => {
 	assert.throws(() => template('<% throw new Error("fail") %>', {}), e => e instanceof Error && /TemplateError: Error: fail/.test(e.message));
 });

@@ -166,6 +166,14 @@
 	<header>
 		<h1>micro-template.js</h1>
 		<p class="subtitle">A minimal, blazing fast JavaScript template engine for hackers.</p>
+		<div style="margin:1em 0 0.5em 0;">
+			<img src="https://img.shields.io/npm/v/micro-template.svg?style=flat-square" alt="npm version"
+				style="vertical-align:middle; margin-right:8px;">
+			<img src="https://img.shields.io/github/stars/cho45/micro-template.js?style=flat-square&label=GitHub+Stars"
+				alt="GitHub stars" style="vertical-align:middle; margin-right:8px;">
+			<img src="https://img.shields.io/npm/l/micro-template.svg?style=flat-square" alt="MIT License"
+				style="vertical-align:middle;">
+		</div>
 	</header>
 	<section class="features">
 		<h2>Features</h2>
@@ -177,16 +185,8 @@
 		</ul>
 	</section>
 	<section class="usage">
-		<h2>Usage Example</h2>
+		<h2>Getting Started</h2>
 		<div class="usage-blocks">
-			<div class="usage-block">
-				<h3>Basic</h3>
-				<pre><code class="language-js">import { template } from 'micro-template';
-
-const result = template('&lt;div&gt;&lt;%= message %&gt;&lt;/div&gt;', { message: 'Hello, inline!' });
-console.log(result); // &lt;div&gt;Hello, inline!&lt;/div&gt;
-</code></pre>
-			</div>
 			<div class="usage-block">
 				<h3>In HTML</h3>
 				<pre><code class="language-html">&lt;script type="application/x-template" id="tmpl1"&gt;
@@ -200,6 +200,7 @@ console.log(result); // &lt;div&gt;Hello, inline!&lt;/div&gt;
 			</div>
 			<div class="usage-block">
 				<h3>In Node.js</h3>
+				<pre><code>npm install micro-template</code></pre>
 				<pre><code class="language-js">import fs from 'node:fs';
 import { template } from 'micro-template';
 

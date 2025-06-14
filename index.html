@@ -193,7 +193,7 @@ console.log(result); // &lt;div&gt;Hello, inline!&lt;/div&gt;
   &lt;div&gt;&lt;%= message %&gt;&lt;/div&gt;
 &lt;/script&gt;
 &lt;script type="module"&gt;
-  import { extended as template } from './lib/micro-template.js';
+  import { extended as template } from 'https://cdn.jsdelivr.net/npm/micro-template@2.1.2/lib/micro-template.js';
   const html = template('tmpl1', { message: 'Hello, world!' });
   document.body.innerHTML += html;
 &lt;/script&gt;</code></pre>

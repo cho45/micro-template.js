@@ -5,14 +5,14 @@ micro-template.js
 
 https://github.com/cho45/micro-template.js
 
-micro-template is a template engine on JavaScript which like embed js.
+micro-template is a template engine for JavaScript which is similar to embed.js.
 
-This is inspired from [John Resig's template]( http://ejohn.org/blog/javascript-micro-templating/ ) but has more efficient feature:
+This is inspired by [John Resig's template]( http://ejohn.org/blog/javascript-micro-templating/ ) but has more efficient features:
 
-* Better error messages: show line-number in runtime errors
-* Support source map: debug is more easily on Chrome including syntax errors
-* Well tested: tested on node.js
-* Escape by default: all output is escaped by default for security
+* Better error messages: shows line numbers in runtime errors
+* Supports source maps: debugging is easier in Chrome, including for syntax errors
+* Well tested: works on Node.js
+* Escapes by default: all output is escaped for security
 
 SYNOPSIS
 --------
@@ -69,7 +69,7 @@ const result = template('part1', {
   foo : 'bar',
   baz : 'piyo'
 });
-conole.log(result)
+console.log(result)
 ```
 
 SYNTAX
@@ -97,9 +97,9 @@ If the second argument is an **Object**, the template will be rendered immediate
 CUSTOM `get` FUNCTION
 ---------------------
 
-By default, micro-template uses `document.getElementById(id).innerHTML` to get template source from id.
+By default, micro-template uses `document.getElementById(id).innerHTML` to get the template source from the id.
 
-To override this behaviour, you can set function to `template.get`.
+To override this behavior, you can set a function to `template.get`. For example, if your template files are in the `tmpl/` directory:
 
 ```js
 import { template } from 'micro-template';
@@ -109,7 +109,7 @@ template.get = function (id) { return require('fs').readFileSync('tmpl/' + id + 
 DEFINE DATA VARIABLE SCOPE
 ----------------------------
 
-micro-template now always expands data variables as local variables in the template function. The template API only supports two arguments: the template source/id and the data object. All keys of the data object are available as local variables in the template code.
+micro-template always expands data variables as local variables in the template function. The template API only supports two arguments: the template source/id and the data object (or an array of property names for precompilation). All keys of the data object are available as local variables in the template code.
 
 If the second argument is an **Array**, it is treated as a list of property names for the data object. In this case, the template function will be compiled with these property names as its local variables, and the function itself will be returned (not executed). This allows you to precompile a template for repeated use with the same set of variable names.
 

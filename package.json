@@ -1,8 +1,9 @@
 {
   "name": "micro-template",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "micro template engine",
   "main": "lib/micro-template.js",
+  "types": "lib/micro-template.d.ts",
   "homepage": "https://github.com/cho45/micro-template.js",
   "repository": "",
   "directories": {
@@ -11,7 +12,8 @@
   "scripts": {
     "test": "node --test",
     "serve": "npx serve .",
-    "bench": "node --expose-gc ./misc/benchmark.js"
+    "bench": "node --expose-gc ./misc/benchmark.js",
+    "test:types": "npx tsc --lib es2015 --noEmit test/types.test.ts"
   },
   "keywords": [
     "template",
@@ -25,5 +27,8 @@
     "@mitata/counters": "^0.0.8",
     "ejs": "^3.1.10",
     "mitata": "^1.0.34"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
   }
 }

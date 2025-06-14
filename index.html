@@ -200,11 +200,14 @@ console.log(result); // &lt;div&gt;Hello, inline!&lt;/div&gt;
 			</div>
 			<div class="usage-block">
 				<h3>In Node.js</h3>
-				<pre><code class="language-js">import { template } from 'micro-template';
-template.get = id =&gt; require('fs').readFileSync('tmpl/' + id + '.tmpl', 'utf-8');
+				<pre><code class="language-js">import fs from 'node:fs';
+import { template } from 'micro-template';
+
+template.get = id => fs.readFileSync('tmpl/' + id + '.tmpl', 'utf-8');
 
 const result = template('tmpl1', { message: 'Hello, Node!' });
-console.log(result);</code></pre>
+console.log(result);
+</code></pre>
 			</div>
 		</div>
 	</section>
@@ -227,6 +230,7 @@ console.log(result);</code></pre>
 	</script>
 	<script type="module">
 		import { extended as template } from './lib/micro-template.js';
+		
 		console.log('micro-template.js loaded', template);
 		console.log('Template example:', template('tmpl1', { message: 'Hello, world!' }));
 	</script>

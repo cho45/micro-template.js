@@ -21,6 +21,17 @@ test('template pre-compiled func', (t) => {
 	assert.strictEqual(result, '<b>foo</b><i>bar</i>');
 });
 
+test('extended renders with data', (t) => {
+	const result = extended('<b><%= foo %></b><i><%= bar %></i>', { foo: 'foo', bar: 'bar' });
+	assert.strictEqual(result, '<b>foo</b><i>bar</i>');
+});
+
+test('extended pre-compiled func', (t) => {
+	const stash = { foo: 'foo', bar: 'bar' };
+	const result = extended('<b><%= foo %></b><i><%= bar %></i>', Object.keys(stash))( stash );
+	assert.strictEqual(result, '<b>foo</b><i>bar</i>');
+});
+
 test('template renders static html (single/double quote)', (t) => {
 	assert.strictEqual(template("<a href='foo'>foo</a>", {}), "<a href='foo'>foo</a>");
 	assert.strictEqual(template('<a href="foo">foo</a>', {}), '<a href="foo">foo</a>');
@@ -148,6 +159,34 @@ test('extended wrapperContent throws bar undefined', (t) => {
 	assert.match(error.message, /TemplateError: ReferenceError: bar is not defined \(on wrapper line 4\) \(on wrapperContent line 6\)/);
 });
 
+test('extended wrapperContent throws foo undefined (line number check)', (t) => {
+	let error;
+	assert.throws(() => {
+		try {
+			extended('wrapperContent', { bar: 'xxx' });
+		} catch (e) {
+			error = e;
+			throw e;
+		}
+	});
+	// wrapperContent line 4 で foo, wrapper line 4 で bar
+	assert.match(error.message, /TemplateError: ReferenceError: foo is not defined \(on wrapperContent line 4\)/);
+});
+
+test('extended wrapperContent throws bar undefined (wrapper line number check)', (t) => {
+	let error;
+	assert.throws(() => {
+		try {
+			extended('wrapperContent', { foo: 'xxx' });
+		} catch (e) {
+			error = e;
+			throw e;
+		}
+	});
+	// wrapper line 4 で bar, wrapperContent line 6 で呼ばれる
+	assert.match(error.message, /TemplateError: ReferenceError: bar is not defined \(on wrapper line 4\) \(on wrapperContent line 6\)/);
+});
+
 // --- シングルクォート・エスケープ ---
 test('template handles various quotes', (t) => {
 	const quotes = [
@@ -209,7 +248,7 @@ test('output object and array', (t) => {
 
 test('reference not found throws', (t) => {
 	assert.throws(() => template('<%= notfound %>', {}), e =>
-		e instanceof Error && /TemplateError: ReferenceError: notfound is not defined \(on template\(string\) line 1\)/.test(e.message)
+		e instanceof Error && /TemplateError: ReferenceError: notfound is not defined \(on template-\w+ line 1\)/.test(e.message)
 	);
 });
 
@@ -227,6 +266,13 @@ test('include circular reference throws', (t) => {
 test('wrapper nested', (t) => {
 	const origGet = template.get;
 	template.get = id => id === 'outer' ? 'OUT<% wrapper("inner", function(){ %>IN<%= foo %><% }) %>OUT' : 'INNER<%=raw content %>INNER';
+	assert.strictEqual(extended('outer', { foo: 'X' }), 'OUTINNERINXINNEROUT');
+	template.get = origGet;
+});
+
+test('wrapper nested lambda', (t) => {
+	const origGet = template.get;
+	template.get = id => id === 'outer' ? 'OUT<% wrapper("inner", () => { %>IN<%= foo %><% }) %>OUT' : 'INNER<%=raw content %>INNER';
 	assert.strictEqual(extended('outer', { foo: 'X' }), 'OUTINNERINXINNEROUT');
 	template.get = origGet;
 });

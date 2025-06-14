@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>
+		<%= pageTitle %>
+	</title>
+	<style>
+		body {
+			font-family: sans-serif;
+			max-width: 700px;
+			margin: 2em auto;
+			background: #f9f9f9;
+		}
+
+		header {
+			margin-bottom: 2em;
+		}
+
+		h1 {
+			font-size: 2em;
+		}
+
+		.post {
+			background: #fff;
+			border-radius: 8px;
+			box-shadow: 0 2px 8px #0001;
+			margin-bottom: 2em;
+			padding: 1em 1.5em;
+		}
+
+		.post-title {
+			font-size: 1.3em;
+			margin: 0 0 0.5em;
+		}
+
+		.post-date {
+			color: #888;
+			font-size: 0.9em;
+			margin-bottom: 1em;
+		}
+
+		form {
+			background: #fff;
+			border-radius: 8px;
+			box-shadow: 0 2px 8px #0001;
+			padding: 1em 1.5em;
+		}
+
+		label {
+			display: block;
+			margin: 1em 0 0.3em;
+		}
+
+		input[type=text],
+		textarea {
+			width: 100%;
+			font-size: 1em;
+			padding: 0.5em;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+
+		button {
+			margin-top: 1em;
+			padding: 0.5em 1.5em;
+			font-size: 1em;
+			border: none;
+			border-radius: 4px;
+			background: #0078d7;
+			color: #fff;
+			cursor: pointer;
+		}
+
+		button:hover {
+			background: #005fa3;
+		}
+
+		nav {
+			margin-bottom: 2em;
+		}
+
+		a {
+			color: #0078d7;
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<h1><a href="/">Simple Blog</a></h1>
+		<nav>
+			<a href="/">Home</a> |
+			<a href="/new">New Post</a>
+		</nav>
+	</header>
+	<main>
+		<% if (page === 'index' ) { %>
+			<% if (posts.length===0) { %>
+				<p>No posts yet.</p>
+			<% } %>
+			<% posts.forEach(function(post) { %>
+				<div class="post">
+					<div class="post-title"><a href="/post/<%= post.id %>"><%= post.title %></a></div>
+					<div class="post-date">
+						<%= post.datetime %>
+					</div>
+					<div>
+						<%= post.body.length> 200 ? post.body.slice(0, 200) + '...' : post.body %>
+					</div>
+				</div>
+			<% }); %>
+		<% } else if (page === 'post' ) { %>
+			<div class="post">
+				<div class="post-title">
+					<%= post.title %>
+				</div>
+				<div class="post-date">
+					<%= post.datetime %>
+				</div>
+				<div>
+					<%= post.body %>
+				</div>
+			</div>
+			<a href="/">&larr; Back to list</a>
+		<% } else if (page === 'new' ) { %>
+			<form method="POST" action="/create">
+				<label>Title</label>
+				<input type="text" name="title" required>
+				<label>Body</label>
+				<textarea name="body" rows="10" required></textarea>
+				<button type="submit">Post</button>
+			</form>
+		<% } else if (page==='notfound' ) { %>
+			<h2>Not Found</h2>
+			<p>The page you are looking for does not exist.</p>
+			<a href="/">&larr; Back to list</a>
+		<% } %>
+</main>
+</body>
+
+</html>

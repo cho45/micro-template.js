@@ -9,6 +9,14 @@ import fs from 'fs';
 // template.get の上書き
 template.get = function (id) { return fs.readFileSync('test/data-' + id + '.tmpl', 'utf-8') };
 
+function templateWithCompiledFunction(stringTemplate, data) {
+	data = Object.assign({}, data);
+	data.__context = {};
+	stringTemplate += `\n<% __context.compiled = arguments.callee; %>`;
+	const result =  template(stringTemplate, data);
+	return [result, data.__context.compiled];
+}
+
 // --- template 基本テスト ---
 test('template renders with data', (t) => {
 	const result = template('<b><%= foo %></b><i><%= bar %></i>', { foo: 'foo', bar: 'bar' });
@@ -252,7 +260,7 @@ test('reference not found throws', (t) => {
 	);
 });
 
-test('TemplateError の cause プロパティが正しいこと', (t) => {
+test('TemplateError has correct cause', (t) => {
 	let thrownError;
 	assert.throws(() => {
 		template('<%= notfound %>', {});
@@ -315,4 +323,19 @@ test('template with properties script tags', (t) => {
 		get bar() { return 'bar' }
 	});
 	assert.strictEqual(result, 'foobar');
+});
+
+test('template output includes sourceMappingURL comment', (t) => {
+	const [_, compiledFunction] = templateWithCompiledFunction('foo bar', {});
+	const compiledFunctionString = compiledFunction.toString();
+	console.log(compiledFunctionString);
+	const match = compiledFunctionString.match(/\n\/\/\# sourceMappingURL=data:application\/json,(.+)\n/);
+	assert(match, 'sourceMappingURL comment is present and correctly formatted');
+	const json = decodeURIComponent(match[1]);
+	let sourceMap;
+	assert.doesNotThrow(() => sourceMap = JSON.parse(json), 'sourceMappingURL JSON is valid');
+	console.log(sourceMap);
+	assert.strictEqual(sourceMap.version, 3, 'source map version is 3');
+	assert.ok(sourceMap.sourcesContent, 'source map has sourcesContent');
+	assert.ok(sourceMap.mappings, 'source map has mappings');
 });

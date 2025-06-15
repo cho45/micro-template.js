@@ -1,7 +1,5 @@
 #!/usr/bin/env node
+import { extended as template } from '../_serialized.js';
 
-(async () => {
-	const { template, extended } = await import('../_serialized.js');
-	const result = extended('main', { foo: 'world', baz: 'baz!' });
-	console.log('render result:', result);
-})();
+const result = template('main', { foo: 'world', baz: 'baz!' });
+console.log('render result:', result);

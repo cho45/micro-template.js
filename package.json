@@ -15,6 +15,14 @@
     "bench": "node --expose-gc ./misc/benchmark.js",
     "test:types": "npx tsc --lib es2015 --noEmit test/types.test.ts"
   },
+  "bin": {
+    "micro-template-serialize": "./bin/micro-template-serialize.js"
+  },
+  "exports": {
+    ".": "./lib/micro-template.js",
+    "./micro-template": "./lib/micro-template.js",
+    "./serializer": "./lib/serializer.js"
+  },
   "keywords": [
     "template",
     "engine",

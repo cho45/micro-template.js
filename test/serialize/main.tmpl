@@ -1,0 +1,11 @@
+<!--meta.keys=["foo", "baz"] -->
+
+HEADER
+<% wrapper('wrapper', function () { %>
+	hello <%= foo %>,
+	<% [1,2].forEach( () => { %>
+	and <%= baz %>
+	<% }) %>
+<% }) %>
+<% include('footer', { year: 2025 }) %>
+FOOTER

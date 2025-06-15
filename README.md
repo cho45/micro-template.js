@@ -241,6 +241,42 @@ summary
    23.28x faster than ejs.render
 ```
 
+## micro-template-serialize
+
+`micro-template-serialize` is a CLI tool for precompiling multiple template files into a single ESM (ECMAScript Module) JavaScript file. This is especially useful for environments where dynamic function generation (such as with `new Function()`) is not allowed, or for delivering precompiled templates to browsers or serverless environments.
+
+### Why use it?
+- **Security:** Avoids the use of `new Function()` at runtime, which is often restricted in secure or serverless environments.
+- **Performance:** Templates are precompiled, so rendering is fast and does not require parsing or compiling templates at runtime.
+- **Convenience:** Bundles multiple templates into a single importable module.
+
+### Usage
+
+```sh
+micro-template-serialize <input1.tmpl> <input2.tmpl> ... --output <output.js> [--root <dir>]
+```
+
+- `<input1.tmpl> ...` : List of template files to serialize.
+- `--output <output.js>` : Output JavaScript file (required).
+- `--root <dir>` : Root directory for template IDs (default: current directory).
+
+#### Example
+
+```sh
+micro-template-serialize test/data-test1.tmpl test/data-fizzbuzz.tmpl --output templates.js --root test
+```
+
+This will generate a file named `templates.js` in the current directory. You can then import the generated module in your JavaScript code:
+
+```js
+import { extended as template } from './templates.js';
+const result = template('main', { foo: 'world', baz: 'baz!' });
+console.log('render result:', result);
+```
+
+- If a template does not contain a `<!--meta.keys=[...]-->` comment, a warning will be shown.
+- The output file is an ESM module (use `import` to load it).
+
 LICENSE
 -------
 

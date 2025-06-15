@@ -9,14 +9,6 @@ import fs from 'fs';
 // template.get の上書き
 template.get = function (id) { return fs.readFileSync('test/data-' + id + '.tmpl', 'utf-8') };
 
-function templateWithCompiledFunction(stringTemplate, data) {
-	data = Object.assign({}, data);
-	data.__context = {};
-	stringTemplate += `\n<% __context.compiled = arguments.callee; %>`;
-	const result =  template(stringTemplate, data);
-	return [result, data.__context.compiled];
-}
-
 // --- template 基本テスト ---
 test('template renders with data', (t) => {
 	const result = template('<b><%= foo %></b><i><%= bar %></i>', { foo: 'foo', bar: 'bar' });
@@ -326,8 +318,8 @@ test('template with properties script tags', (t) => {
 });
 
 test('template output includes sourceMappingURL comment', (t) => {
-	const [_, compiledFunction] = templateWithCompiledFunction('foo bar', {});
-	const compiledFunctionString = compiledFunction.toString();
+	const func = template('foo bar', []);
+	const compiledFunctionString = func.compiled.toString();
 	console.log(compiledFunctionString);
 	const match = compiledFunctionString.match(/\n\/\/\# sourceMappingURL=data:application\/json,(.+)\n/);
 	assert(match, 'sourceMappingURL comment is present and correctly formatted');

@@ -40,24 +40,25 @@ Notes:
 // --- 引数パース ---
 const args = process.argv.slice(2);
 if (args.includes('--help') || args.includes('-h')) {
-  console.log(USAGE);
-  process.exit(0);
+	console.log(USAGE);
+	process.exit(0);
 }
 let outputFile;
 let rootDir = process.cwd();
 const inputFiles = [];
 for (let i = 0; i < args.length; i++) {
-  if (args[i] === '--output') {
-    outputFile = args[++i];
-  } else if (args[i] === '--root') {
-    rootDir = args[++i];
-  } else {
-    inputFiles.push(args[i]);
-  }
+	if (args[i] === '--output') {
+		outputFile = args[++i];
+	} else
+	if (args[i] === '--root') {
+		rootDir = args[++i];
+	} else {
+		inputFiles.push(args[i]);
+	}
 }
 if (!outputFile || inputFiles.length === 0) {
-  console.error('Usage: micro-template-serialize <input1.tmpl> ... --output templates.js [--root <dir>]');
-  process.exit(1);
+	console.error('Usage: micro-template-serialize <input1.tmpl> ... --output templates.js [--root <dir>]');
+	process.exit(1);
 }
 
 // --- テンプレートファイル読み込み ---
@@ -78,6 +79,6 @@ for (const file of inputFiles) {
 	}
 }
 
-const code = serializeTemplates(templates, { exportName: 'extended' });
+const code = serializeTemplates(templates);
 await fs.writeFile(outputFile, code);
 console.log(`Wrote: ${outputFile}`);

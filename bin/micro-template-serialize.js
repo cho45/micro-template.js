@@ -57,28 +57,74 @@ for (let i = 0; i < args.length; i++) {
 	}
 }
 if (!outputFile || inputFiles.length === 0) {
-	console.error('Usage: micro-template-serialize <input1.tmpl> ... --output templates.js [--root <dir>]');
+	console.error('❌ Error: Missing required arguments');
+	if (!outputFile) console.error('   Missing --output flag');
+	if (inputFiles.length === 0) console.error('   No input template files specified');
+	console.error('\nUsage: micro-template-serialize <input1.tmpl> ... --output templates.js [--root <dir>]');
+	console.error('Use --help for more information');
 	process.exit(1);
 }
 
 // --- テンプレートファイル読み込み ---
+console.log(`🔄 Processing ${inputFiles.length} template file(s)...`);
+console.log(`📁 Root directory: ${rootDir}`);
+console.log(`📄 Output file: ${outputFile}`);
+console.log('');
+
 const templates = {};
-for (const file of inputFiles) {
+for (let i = 0; i < inputFiles.length; i++) {
+	const file = inputFiles[i];
 	// id を rootDir からの相対パス（拡張子除く）にする
 	const relPath = path.relative(rootDir, file);
 	const id = relPath.replace(path.extname(relPath), '');
-	const source = await fs.readFile(file, 'utf-8');
-	templates[id] = { source };
-	source.replace(/<!--meta\.(\w+)=(.+?)-->/g, (match, key, value) => {
-		templates[id][key] = JSON.parse(value);
-		return ''; // Remove the comment
-	});
-	if (!templates[id].keys) {
-		console.warn(`Warning: Template "${id}" does not have keys defined. Please add <!--meta.keys=["key1", "key2"]--> in the template file.`);
-		templates[id].keys = [];
+	
+	try {
+		const source = await fs.readFile(file, 'utf-8');
+		templates[id] = { source };
+		
+		// メタデータの抽出
+		source.replace(/<!--meta\.(\w+)=(.+?)-->/g, (match, key, value) => {
+			templates[id][key] = JSON.parse(value);
+			return ''; // Remove the comment
+		});
+		
+		if (!templates[id].keys) {
+			console.warn(`⚠️  Template "${id}" does not have keys defined. Please add <!--meta.keys=["key1", "key2"]--> in the template file.`);
+			templates[id].keys = [];
+		}
+		
+		console.log(`✅ [${i + 1}/${inputFiles.length}] ${file} → ${id} (${templates[id].keys?.length || 0} keys)`);
+	} catch (error) {
+		console.error(`❌ Failed to read ${file}: ${error.message}`);
+		process.exit(1);
 	}
 }
 
-const code = serializeTemplates(templates);
-await fs.writeFile(outputFile, code);
-console.log(`Wrote: ${outputFile}`);
+console.log('\n🔄 Compiling templates...');
+const startTime = Date.now();
+const code = serializeTemplates(templates, {
+	onProgress: ({ current, total, templateId, keys }) => {
+		console.log(`  📝 [${current}/${total}] Compiling template: ${templateId} (${keys} keys)`);
+	}
+});
+const endTime = Date.now();
+
+console.log(`\n💾 Writing output file...`);
+try {
+	await fs.writeFile(outputFile, code);
+	const stats = await fs.stat(outputFile);
+	const fileSize = (stats.size / 1024).toFixed(2);
+	
+	console.log(`\n✨ Successfully generated template bundle!`);
+	console.log(`📄 Output: ${outputFile}`);
+	console.log(`📆 File size: ${fileSize} KB`);
+	console.log(`🕰️ Compilation time: ${endTime - startTime}ms`);
+	console.log(`📦 Templates included: ${Object.keys(templates).length}`);
+	console.log('');
+	console.log('Usage example:');
+	console.log(`  import { extended as template } from './${path.basename(outputFile)}';`);
+	console.log(`  const result = template('templateId', { key: 'value' });`);
+} catch (error) {
+	console.error(`❌ Failed to write output file: ${error.message}`);
+	process.exit(1);
+}
